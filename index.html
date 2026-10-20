@@ -1,0 +1,2572 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>京能协同 · 浙江京能电力设备有限公司</title>
+<style>
+/* ============ 主题变量 ============ */
+:root, [data-theme="light"] {
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --card-2: #fafafc;
+  --text: #1c1e26;
+  --text-2: #636672;
+  --text-3: #9aa0ae;
+  --border: #e7eaf1;
+  --border-soft: #eff1f6;
+  --accent: #0a84ff;
+  --accent-hover: #0071e3;
+  --accent-soft: rgba(10,132,255,.10);
+  --green: #28c76f;
+  --green-soft: rgba(40,199,111,.12);
+  --red: #ff5a5f;
+  --red-soft: rgba(255,90,95,.10);
+  --orange: #ff9f0a;
+  --orange-soft: rgba(255,159,10,.13);
+  --purple: #a259ff;
+  --purple-soft: rgba(162,89,255,.12);
+  --blue-soft: rgba(10,132,255,.10);
+  --sidebar-bg: #ffffff;
+  --topbar-bg: rgba(245,245,247,.8);
+  --input-bg: #f1f3f8;
+  --shadow: 0 1px 2px rgba(16,24,40,.05), 0 10px 28px -14px rgba(16,24,40,.14);
+  --shadow-sm: 0 1px 2px rgba(16,24,40,.06);
+  --shadow-lg: 0 24px 60px -12px rgba(16,24,40,.22);
+  --drawer-bg: #ffffff;
+  --drawer-frost: rgba(255,255,255,.88);
+  --hover-bg: #f3f5f9;
+}
+[data-theme="dark"] {
+  --bg: #0e1014;
+  --card: #171a21;
+  --card-2: #1c2029;
+  --text: #e9ebf1;
+  --text-2: #a7adba;
+  --text-3: #6b7280;
+  --border: #262b36;
+  --border-soft: #20242e;
+  --accent: #0a84ff;
+  --accent-hover: #409cff;
+  --accent-soft: rgba(10,132,255,.16);
+  --green: #30d158;
+  --green-soft: rgba(48,209,88,.14);
+  --red: #ff6961;
+  --red-soft: rgba(255,105,97,.14);
+  --orange: #ffb340;
+  --orange-soft: rgba(255,179,64,.15);
+  --purple: #c07bff;
+  --purple-soft: rgba(192,123,255,.15);
+  --blue-soft: rgba(10,132,255,.16);
+  --sidebar-bg: #14171e;
+  --topbar-bg: rgba(14,16,20,.80);
+  --input-bg: #20242e;
+  --shadow: 0 1px 2px rgba(0,0,0,.30), 0 12px 30px -14px rgba(0,0,0,.55);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.35);
+  --shadow-lg: 0 24px 60px -12px rgba(0,0,0,.6);
+  --drawer-bg: #171a21;
+  --drawer-frost: rgba(23,26,33,.88);
+  --hover-bg: #20242e;
+}
+
+/* ============ 侧边栏宽度变量（拖拽 / 折叠时由 JS 改写） ============ */
+:root { --sidebar-w: 236px; }
+body.side-collapsed { --sidebar-w: 72px; }
+body.resizing { user-select: none; cursor: ew-resize; }
+body.resizing .sidebar, body.resizing .main { transition: none !important; }
+
+/* ============ 基础 ============ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  transition: background .3s, color .3s;
+  overflow-x: hidden;
+}
+::placeholder { color: var(--text-3); }
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
+
+/* ============ 布局 ============ */
+#app { display: flex; min-height: 100vh; }
+
+/* ---- 侧边栏 ---- */
+.sidebar {
+  width: var(--sidebar-w); flex-shrink: 0;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  position: fixed; top: 0; left: 0; bottom: 0;
+  display: flex; flex-direction: column;
+  z-index: 50;
+  transition: width .25s ease, background .3s, border-color .3s;
+}
+.logo { display: flex; align-items: center; gap: 12px; padding: 22px 20px 18px; }
+.logo-mark {
+  width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 60%, #a259ff 100%);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 20px; font-weight: 700;
+  box-shadow: 0 6px 16px -6px rgba(10,132,255,.55);
+}
+.logo-name { font-size: 17px; font-weight: 700; letter-spacing: .5px; }
+.logo-sub { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.nav { flex: 1; padding: 6px 12px; overflow-y: auto; }
+.nav-group { font-size: 11px; color: var(--text-3); padding: 14px 12px 6px; letter-spacing: 1px; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 12px; margin-bottom: 2px;
+  color: var(--text-2); cursor: pointer; font-size: 14px; font-weight: 500;
+  transition: all .22s ease; border: none; background: transparent; width: 100%; text-align: left;
+}
+.nav-item .nav-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+.nav-item:hover { background: var(--hover-bg); color: var(--text); }
+.nav-item.active {
+  background: var(--accent-soft); color: var(--accent); font-weight: 600;
+}
+.sidebar-foot {
+  padding: 16px; border-top: 1px solid var(--border-soft);
+  display: flex; align-items: center; gap: 10px;
+}
+.sidebar-foot .meta { font-size: 12px; color: var(--text-3); }
+.sidebar-foot .meta b { display: block; font-size: 13px; color: var(--text); }
+
+/* ---- 主区域 ---- */
+.main { flex: 1; margin-left: var(--sidebar-w); min-width: 0; display: flex; flex-direction: column; transition: margin-left .25s ease; }
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  height: 66px; display: flex; align-items: center; gap: 16px;
+  padding: 0 28px;
+  background: var(--topbar-bg);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+  transition: background .3s, border-color .3s;
+}
+.topbar-title { font-size: 16px; font-weight: 700; white-space: nowrap; }
+.search-wrap { position: relative; flex: 1; max-width: 420px; }
+.search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--input-bg); border-radius: 12px; padding: 8px 14px;
+  border: 1px solid transparent; transition: all .2s;
+}
+.search-box:focus-within { background: var(--card); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.search-box input { border: none; outline: none; background: transparent; flex: 1; font-size: 13.5px; color: var(--text); }
+.search-box .s-icon { color: var(--text-3); font-size: 15px; }
+.search-results {
+  position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: var(--shadow-lg); overflow: hidden; display: none; max-height: 340px; overflow-y: auto;
+}
+.search-results.show { display: block; animation: popIn .18s ease; }
+.search-result-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; font-size: 13px;
+}
+.search-result-item:hover { background: var(--hover-bg); }
+.search-result-item .tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; background: var(--accent-soft); color: var(--accent); flex-shrink: 0; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 12px; border: none; background: transparent;
+  color: var(--text-2); font-size: 18px; display: flex; align-items: center; justify-content: center;
+  transition: all .22s ease; position: relative;
+}
+.icon-btn:hover { background: var(--hover-bg); color: var(--text); transform: translateY(-1px); }
+.badge-dot {
+  position: absolute; top: 8px; right: 9px; min-width: 17px; height: 17px; padding: 0 5px;
+  background: var(--red); color: #fff; font-size: 10px; font-weight: 700;
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--topbar-bg);
+}
+.user-chip {
+  display: flex; align-items: center; gap: 10px; padding: 5px 10px 5px 5px;
+  border-radius: 14px; border: none; background: transparent; transition: all .22s ease;
+}
+.user-chip:hover { background: var(--hover-bg); }
+.user-chip .u-name { font-size: 13px; font-weight: 600; }
+.user-chip .u-role { font-size: 11px; color: var(--text-3); }
+.dropdown {
+  position: absolute; top: calc(100% + 10px); right: 0;
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: var(--shadow-lg); min-width: 300px; display: none; overflow: hidden; z-index: 60;
+}
+.dropdown.show { display: block; animation: popIn .18s ease; }
+.dropdown-head { padding: 12px 16px; font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center; }
+.dropdown-head a { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 500; }
+.notif-item { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); cursor: pointer; transition: background .15s; }
+.notif-item:last-child { border-bottom: none; }
+.notif-item:hover { background: var(--hover-bg); }
+.notif-item.unread { background: var(--accent-soft); }
+.notif-item .n-icon { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.notif-item .n-title { font-size: 13px; font-weight: 600; }
+.notif-item .n-desc { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+.notif-item .n-time { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+.menu-item { display: flex; align-items: center; gap: 10px; padding: 11px 16px; font-size: 13.5px; cursor: pointer; transition: background .15s; border: none; background: none; width: 100%; text-align: left; color: var(--text); }
+.menu-item:hover { background: var(--hover-bg); }
+.menu-item.danger { color: var(--red); }
+.menu-divider { height: 1px; background: var(--border-soft); margin: 4px 0; }
+
+/* ---- 页面 ---- */
+.page { padding: 32px 32px 64px; max-width: 1280px; margin: 0 auto; width: 100%; animation: fadeUp .35s ease; }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; gap: 16px; flex-wrap: wrap; }
+.page-head h2 { font-size: 22px; font-weight: 700; letter-spacing: .3px; }
+.page-head p { font-size: 13px; color: var(--text-2); margin-top: 4px; }
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: var(--shadow-sm); transition: box-shadow .25s ease, transform .25s ease, background .25s ease, border-color .25s ease;
+}
+.card.pad { padding: 24px; }
+/* 金额数字等宽，避免跳动 */
+.tnum, .stat-num, .total-row b, .appr-amount { font-variant-numeric: tabular-nums; }
+
+/* ---- 工作台 ---- */
+.greet { font-size: 24px; font-weight: 700; letter-spacing: .3px; }
+.greet-sub { color: var(--text-2); font-size: 13.5px; margin-top: 6px; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0; }
+.stat-card { padding: 20px 22px; display: flex; align-items: center; gap: 16px; cursor: pointer; }
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.stat-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.stat-num { font-size: 26px; font-weight: 700; line-height: 1.2; }
+.stat-label { font-size: 12.5px; color: var(--text-2); }
+.dash-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; }
+.dash-col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.panel-head h3 { font-size: 15px; font-weight: 700; }
+.panel-head .more { font-size: 12.5px; color: var(--accent); cursor: pointer; font-weight: 500; }
+.panel-head .more:hover { text-decoration: underline; }
+.todo-item { display: flex; align-items: center; gap: 12px; padding: 11px 4px; border-bottom: 1px solid var(--border-soft); cursor: pointer; transition: background .15s; border-radius: 8px; }
+.todo-item:last-child { border-bottom: none; }
+.todo-item:hover { background: var(--hover-bg); }
+.checkbox {
+  width: 20px; height: 20px; border-radius: 7px; border: 1.5px solid var(--text-3);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 13px; transition: all .2s; background: transparent;
+}
+.checkbox.done { background: var(--green); border-color: var(--green); }
+.todo-text { flex: 1; font-size: 13.5px; min-width: 0; }
+.todo-text.done { text-decoration: line-through; color: var(--text-3); }
+.todo-due { font-size: 11.5px; color: var(--text-3); white-space: nowrap; }
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ""; position: absolute; left: 8px; top: 8px; bottom: 8px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; padding-bottom: 20px; }
+.tl-item:last-child { padding-bottom: 2px; }
+.tl-dot { position: absolute; left: -24px; top: 4px; width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid var(--card); box-shadow: 0 0 0 2px var(--border); }
+.tl-text { font-size: 13px; }
+.tl-text b { font-weight: 600; }
+.tl-time { font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
+.chart-tip { pointer-events: none; }
+
+/* ---- 标签 ---- */
+.badge { display: inline-flex; align-items: center; font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+.badge.red, .badge.high { background: var(--red-soft); color: var(--red); }
+.badge.orange, .badge.mid { background: var(--orange-soft); color: var(--orange); }
+.badge.green, .badge.low, .badge.done { background: var(--green-soft); color: var(--green); }
+.badge.blue { background: var(--blue-soft); color: var(--accent); }
+.badge.purple { background: var(--purple-soft); color: var(--purple); }
+.badge.gray { background: var(--input-bg); color: var(--text-2); }
+
+/* ---- 筛选条 ---- */
+.filter-bar { display: flex; align-items: center; gap: 8px; row-gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.seg { display: flex; background: var(--input-bg); border-radius: 12px; padding: 3px; gap: 2px; }
+.seg button { border: none; background: transparent; padding: 7px 16px; border-radius: 9px; font-size: 13px; color: var(--text-2); font-weight: 500; transition: all .22s ease; }
+.seg button:hover { color: var(--text); }
+.seg button.active { background: var(--card); color: var(--text); font-weight: 600; box-shadow: var(--shadow-sm); }
+
+/* ---- 审批 ---- */
+.approval-list { display: flex; flex-direction: column; gap: 12px; }
+.approval-item {
+  display: grid; grid-template-columns: 1fr auto; gap: 6px 16px;
+  padding: 18px 22px; cursor: pointer; align-items: center;
+}
+.approval-item:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.appr-title { font-size: 14.5px; font-weight: 600; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.appr-desc { font-size: 12.5px; color: var(--text-2); margin-top: 5px; }
+.appr-side { text-align: right; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.appr-time { font-size: 11.5px; color: var(--text-3); }
+
+/* ---- 抽屉 ---- */
+.drawer-mask { position: fixed; inset: 0; background: rgba(10,14,20,.42); backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity .28s; z-index: 90; }
+.drawer-mask.show { opacity: 1; pointer-events: auto; }
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 440px; max-width: 92vw;
+  background: var(--drawer-frost); z-index: 95;
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  transform: translateX(105%); transition: transform .3s cubic-bezier(.32,.72,.28,1);
+  box-shadow: var(--shadow-lg); display: flex; flex-direction: column;
+  border-left: 1px solid var(--border);
+}
+.drawer.show { transform: translateX(0); }
+.drawer-head { padding: 24px 24px 16px; border-bottom: 1px solid var(--border-soft); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.drawer-head h3 { font-size: 17px; font-weight: 700; line-height: 1.5; }
+.drawer-body { flex: 1; overflow-y: auto; padding: 24px; }
+.drawer-foot { padding: 16px 24px; border-top: 1px solid var(--border-soft); display: flex; gap: 12px; }
+.info-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-soft); font-size: 13.5px; }
+.info-row:last-child { border-bottom: none; }
+.info-row .k { color: var(--text-2); }
+.info-row .v { font-weight: 500; text-align: right; }
+.desc-box { background: var(--card-2); border: 1px solid var(--border-soft); border-radius: 12px; padding: 14px 16px; font-size: 13px; color: var(--text-2); margin: 14px 0; line-height: 1.7; }
+.step-timeline { position: relative; padding-left: 30px; margin: 6px 0 4px; }
+.step-timeline::before { content: ""; position: absolute; left: 10px; top: 10px; bottom: 10px; width: 2px; background: var(--border); border-radius: 2px; }
+.step { position: relative; padding-bottom: 22px; }
+.step:last-child { padding-bottom: 0; }
+.step-dot { position: absolute; left: -26px; top: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--card); border: 3px solid var(--text-3); }
+.step.done .step-dot { border-color: var(--green); background: var(--green); }
+.step.current .step-dot { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.step.reject .step-dot { border-color: var(--red); background: var(--red); }
+.step-title { font-size: 13.5px; font-weight: 600; }
+.step-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+
+/* ---- 按钮 ---- */
+.btn {
+  border: none; border-radius: 12px; padding: 10px 22px; font-size: 13.5px; font-weight: 600;
+  transition: all .22s ease; display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+}
+.btn:active { transform: scale(.97); }
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 6px 16px -6px rgba(10,132,255,.5); }
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-success { background: var(--green); color: #fff; box-shadow: 0 6px 16px -6px rgba(40,199,111,.5); }
+.btn-success:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.btn-danger { background: var(--red); color: #fff; box-shadow: 0 6px 16px -6px rgba(255,90,95,.5); }
+.btn-danger:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.btn-ghost { background: var(--input-bg); color: var(--text); }
+.btn-ghost:hover { background: var(--hover-bg); }
+.btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+/* ---- 通讯录 ---- */
+.contact-layout { display: grid; grid-template-columns: 270px 1fr; gap: 18px; align-items: start; }
+.tree { padding: 10px; }
+.tree-node { user-select: none; }
+.tree-row { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 10px; cursor: pointer; font-size: 13.5px; transition: background .15s; }
+.tree-row:hover { background: var(--hover-bg); }
+.tree-row.selected { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.tree-caret { width: 18px; text-align: center; color: var(--text-3); font-size: 11px; transition: transform .2s; flex-shrink: 0; }
+.tree-caret.open { transform: rotate(90deg); }
+.tree-children { margin-left: 14px; border-left: 1px solid var(--border); padding-left: 8px; }
+.tree-count { margin-left: auto; font-size: 11px; color: var(--text-3); background: var(--input-bg); border-radius: 10px; padding: 1px 8px; }
+.member-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.member-card { display: flex; align-items: center; gap: 14px; padding: 16px 18px; }
+.member-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.member-info { flex: 1; min-width: 0; }
+.member-name { font-size: 14px; font-weight: 600; }
+.member-title { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+.member-contact { font-size: 11.5px; color: var(--text-3); margin-top: 6px; line-height: 1.7; }
+.avatar { border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; flex-shrink: 0; }
+.toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.input {
+  background: var(--input-bg); border: 1px solid transparent; border-radius: 12px;
+  padding: 10px 16px; font-size: 13.5px; color: var(--text); outline: none; transition: all .2s; width: 280px;
+}
+.input:focus { background: var(--card); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+/* ---- 文档 ---- */
+.doc-layout { display: grid; grid-template-columns: 240px 1fr; gap: 18px; align-items: start; }
+.folder-list { padding: 10px; display: flex; flex-direction: column; gap: 4px; }
+.folder-item { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 12px; cursor: pointer; font-size: 13.5px; transition: all .15s; border: none; background: transparent; width: 100%; text-align: left; color: var(--text); }
+.folder-item:hover { background: var(--hover-bg); }
+.folder-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.folder-item .f-icon { font-size: 18px; }
+.folder-item .f-count { margin-left: auto; font-size: 11px; color: var(--text-3); }
+.file-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.file-table th { text-align: left; font-size: 12px; color: var(--text-3); font-weight: 500; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.file-table td { padding: 13px 14px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
+.file-table tr:last-child td { border-bottom: none; }
+.file-table tbody tr { transition: background .15s; cursor: default; }
+.file-table tbody tr:hover { background: var(--hover-bg); }
+.file-name { display: flex; align-items: center; gap: 12px; font-weight: 500; }
+.file-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-2); margin-bottom: 4px; }
+.breadcrumb b { color: var(--text); }
+
+/* ---- Toast / Modal ---- */
+.toast-wrap { position: fixed; top: 84px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: none; }
+.toast {
+  background: rgba(28,30,38,.94); color: #fff; padding: 12px 20px; border-radius: 14px;
+  font-size: 13.5px; display: flex; align-items: center; gap: 10px;
+  box-shadow: var(--shadow-lg); animation: toastIn .3s cubic-bezier(.2,.9,.3,1.15);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); max-width: 340px;
+}
+[data-theme="dark"] .toast { background: rgba(240,242,248,.94); color: #1c1e26; }
+.modal-mask { position: fixed; inset: 0; background: rgba(10,14,20,.45); backdrop-filter: blur(3px); z-index: 150; display: none; align-items: center; justify-content: center; }
+.modal-mask.show { display: flex; animation: fadeIn .2s ease; }
+.modal { background: var(--card); border-radius: 16px; padding: 24px; width: 400px; max-width: 90vw; box-shadow: var(--shadow-lg); animation: popIn .25s ease; border: 1px solid var(--border); }
+.modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+.modal .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* ---- 报价模块 ---- */
+.modal.wide { width: 880px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-field label { display: block; font-size: 12.5px; color: var(--text-2); margin-bottom: 6px; font-weight: 500; }
+.form-field.full { grid-column: 1 / -1; margin-top: 4px; }
+.items-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.items-table th { text-align: left; font-size: 12px; color: var(--text-3); font-weight: 500; padding: 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.items-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
+.items-table input { width: 100%; background: var(--input-bg); border: 1px solid transparent; border-radius: 8px; padding: 8px 10px; font-size: 13px; color: var(--text); outline: none; transition: all .15s; }
+.items-table input:focus { border-color: var(--accent); background: var(--card); box-shadow: 0 0 0 3px var(--accent-soft); }
+.total-row { text-align: right; font-size: 14px; font-weight: 600; padding: 12px 8px 0; }
+.total-row b { color: var(--accent); font-size: 19px; margin-left: 6px; }
+/* 价税汇总条 */
+.tax-summary { display: flex; justify-content: flex-end; align-items: flex-end; gap: 32px; padding: 16px 8px 0; font-size: 12.5px; color: var(--text-2); }
+.tax-summary b { display: block; font-size: 16px; color: var(--text); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.tax-summary .grand b { color: var(--accent); font-size: 22px; }
+.row-del { color: var(--text-3); }
+.row-del:hover { color: var(--red); background: var(--red-soft); }
+.comment-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border-soft); }
+.comment-item:last-child { border-bottom: none; }
+.comment-body { flex: 1; min-width: 0; }
+.comment-head { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+.comment-time { color: var(--text-3); font-size: 11px; font-weight: 400; }
+.comment-text { font-size: 13px; color: var(--text-2); margin-top: 4px; line-height: 1.6; }
+.comment-form { display: flex; gap: 10px; margin-top: 12px; }
+
+/* ---- 空状态 ---- */
+.empty { text-align: center; padding: 48px 20px; color: var(--text-3); }
+.empty svg { margin-bottom: 16px; }
+.empty .e-text { font-size: 13.5px; line-height: 1.7; }
+
+/* ---- 侧边栏：折叠态 / 拖拽手柄 / 图标栏 tooltip ---- */
+.collapse-btn {
+  margin-left: auto; width: 30px; height: 30px; border-radius: 9px; border: none;
+  background: transparent; color: var(--text-3); font-size: 19px; line-height: 1;
+  display: flex; align-items: center; justify-content: center; transition: all .2s; flex-shrink: 0;
+}
+.collapse-btn:hover { background: var(--hover-bg); color: var(--text); }
+.collapse-btn:active { transform: scale(.92); }
+.side-resizer {
+  position: absolute; top: 0; right: -5px; bottom: 0; width: 10px;
+  cursor: ew-resize; z-index: 55; touch-action: none;
+}
+.side-resizer::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 4px; width: 2px;
+  border-radius: 2px; background: transparent; transition: background .2s;
+}
+.side-resizer:hover::after { background: var(--accent); }
+body.side-collapsed .side-resizer { display: none; }
+body.side-collapsed .logo { flex-direction: column; align-items: center; gap: 10px; padding: 18px 8px 14px; }
+body.side-collapsed .logo-text { display: none; }
+body.side-collapsed .collapse-btn { margin-left: 0; transform: rotate(180deg); }
+body.side-collapsed .nav { padding: 6px 10px; overflow: visible; }
+body.side-collapsed .nav-group { display: none; }
+body.side-collapsed .nav-item { justify-content: center; padding: 11px 0; gap: 0; position: relative; }
+body.side-collapsed .nav-item .nav-icon { width: auto; font-size: 20px; }
+body.side-collapsed .nav-label { display: none; }
+body.side-collapsed .sidebar-foot { justify-content: center; padding: 14px 0; }
+body.side-collapsed .sidebar-foot .meta { display: none; }
+body.side-collapsed .nav-item:hover::after {
+  content: attr(data-tip);
+  position: absolute; left: calc(100% + 14px); top: 50%; transform: translateY(-50%);
+  background: rgba(28,30,38,.94); color: #fff; font-size: 12.5px; font-weight: 500;
+  padding: 8px 14px; border-radius: 10px; white-space: nowrap; z-index: 120;
+  box-shadow: var(--shadow-lg); pointer-events: none; animation: fadeIn .15s ease;
+}
+[data-theme="dark"] body.side-collapsed .nav-item:hover::after {
+  background: rgba(240,242,248,.94); color: #1c1e26;
+}
+
+/* ---- 应用中心卡片 ---- */
+.app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 16px; }
+.app-card { padding: 24px; cursor: pointer; }
+.app-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.app-card.coming { border-style: dashed; }
+.app-card.coming .app-icon { filter: grayscale(.35); opacity: .85; }
+.app-icon {
+  width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center;
+  justify-content: center; font-size: 25px; margin-bottom: 14px; flex-shrink: 0;
+}
+.app-name { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.app-desc { font-size: 12.5px; color: var(--text-2); margin-top: 6px; line-height: 1.7; min-height: 42px; }
+.app-go { font-size: 13px; color: var(--accent); font-weight: 600; margin-top: 12px; }
+.app-note { font-size: 12px; color: var(--text-3); margin-top: 12px; }
+
+/* ---- 动画 ---- */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { opacity: 0; transform: scale(.96) translateY(-4px); } to { opacity: 1; transform: none; } }
+@keyframes toastIn { from { opacity: 0; transform: translateY(-14px) scale(.95); } to { opacity: 1; transform: none; } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(-10px); } }
+
+@media (max-width: 1100px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-grid { grid-template-columns: 1fr; }
+  .contact-layout, .doc-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .page { padding: 20px 16px 50px; }
+}
+
+/* ============ 3D 趋势图 ============ */
+#trend3d { position: relative; height: 300px; border-radius: 12px; overflow: hidden; cursor: grab; touch-action: pan-y; }
+#trend3d:active { cursor: grabbing; }
+#trend3d canvas { display: block; }
+.trend-tip {
+  position: absolute; z-index: 5; pointer-events: none;
+  background: var(--drawer-frost); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;
+  font-size: 12px; color: var(--text); box-shadow: var(--shadow-lg);
+  transform: translate(-50%, -115%); white-space: nowrap; display: none;
+  transition: opacity .15s ease;
+}
+.trend-tip b { color: var(--accent); font-size: 14px; }
+.trend-hint {
+  position: absolute; right: 10px; bottom: 8px; z-index: 4; pointer-events: none;
+  font-size: 11px; color: var(--text-3);
+}
+
+/* ============ 应用卡片 3D 倾斜 ============ */
+.app-card.tilt3d {
+  position: relative; overflow: hidden;
+  transform-style: preserve-3d; will-change: transform;
+}
+.app-card.tilt3d::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(560px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255,255,255,.38), rgba(255,255,255,0) 46%);
+  opacity: 0; transition: opacity .35s ease; z-index: 3;
+}
+.app-card.tilt3d:hover::after { opacity: 1; }
+[data-theme="dark"] .app-card.tilt3d::after {
+  background: radial-gradient(560px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255,255,255,.16), rgba(255,255,255,0) 46%);
+}
+.app-card.tilt3d > * { position: relative; z-index: 1; }
+
+/* ============ 3D 柜体展厅 ============ */
+.showroom {
+  position: fixed; inset: 0; z-index: 400; display: flex; flex-direction: column;
+  background: var(--drawer-frost); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  animation: srIn .38s cubic-bezier(.2,.8,.25,1);
+}
+@keyframes srIn { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
+.sr-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 20px 26px 4px; }
+.sr-title { font-size: 19px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 10px; }
+.sr-sub { font-size: 12.5px; color: var(--text-3); margin-top: 5px; }
+.sr-close {
+  width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border);
+  background: var(--card); color: var(--text-2); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .22s ease; box-shadow: var(--shadow-sm);
+}
+.sr-close:hover { transform: scale(1.08) rotate(90deg); color: var(--red); border-color: var(--red-soft); }
+.sr-stage {
+  position: relative; flex: 1; margin: 12px 26px; border-radius: 20px; overflow: hidden;
+  border: 1px solid var(--border); box-shadow: var(--shadow-lg); min-height: 320px;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, rgba(10,132,255,.10), transparent 60%),
+    linear-gradient(180deg, var(--card-2), var(--bg));
+}
+.sr-stage canvas { display: block; }
+.sr-toolbar { position: absolute; top: 14px; left: 14px; z-index: 6; display: flex; gap: 8px; flex-wrap: wrap; }
+.sr-btn {
+  border: 1px solid var(--border); background: var(--drawer-frost);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  color: var(--text-2); font-size: 12.5px; font-weight: 600; padding: 8px 14px; border-radius: 20px;
+  cursor: pointer; transition: all .2s ease; box-shadow: var(--shadow-sm);
+}
+.sr-btn:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-1px); }
+.sr-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.sr-btn.door { background: var(--accent); border-color: var(--accent); color: #fff; }
+.sr-btn.door:hover { background: var(--accent-hover); color: #fff; }
+.sr-loading {
+  position: absolute; inset: 0; z-index: 7; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: var(--text-3); background: transparent;
+}
+.sr-infobar {
+  margin: 0 26px 22px; padding: 13px 20px; border-radius: 16px;
+  background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+  display: flex; gap: 10px 26px; flex-wrap: wrap; align-items: center;
+  font-size: 12.5px; color: var(--text-2);
+}
+.sr-infobar b { color: var(--text); font-weight: 700; }
+.sr-infobar .dot-sep { color: var(--text-3); }
+@media (max-width: 760px) {
+  .sr-head, .sr-infobar { margin-left: 14px; margin-right: 14px; }
+  .sr-stage { margin: 10px 14px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- ===== 侧边栏 ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-mark">京</div>
+      <div class="logo-text">
+        <div class="logo-name">京能协同</div>
+        <div class="logo-sub">浙江京能电力设备</div>
+      </div>
+      <button class="collapse-btn" id="sideCollapse" title="收起 / 展开菜单">‹</button>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-resizer" id="sideResizer" title="拖拽调整侧边栏宽度"></div>
+    <div class="sidebar-foot">
+      <span id="sideAvatar"></span>
+      <div class="meta"><b>Yuan</b>系统管理员</div>
+    </div>
+  </aside>
+
+  <!-- ===== 主区域 ===== -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-title" id="topbarTitle">工作台</div>
+      <div class="search-wrap">
+        <div class="search-box">
+          <span class="s-icon">🔍</span>
+          <input id="globalSearch" type="text" placeholder="搜索报价、审批、联系人、文档…" autocomplete="off">
+        </div>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" title="切换深色 / 浅色">🌙</button>
+        <div style="position:relative">
+          <button class="icon-btn" id="bellBtn" title="通知">🔔<span class="badge-dot" id="notifDot">5</span></button>
+          <div class="dropdown" id="notifDropdown">
+            <div class="dropdown-head"><span>通知中心</span><a id="markRead">全部标为已读</a></div>
+            <div id="notifList"></div>
+          </div>
+        </div>
+        <div style="position:relative">
+          <button class="user-chip" id="userBtn">
+            <span id="topAvatar"></span>
+            <span style="text-align:left"><span class="u-name">Yuan</span><br><span class="u-role">系统管理员</span></span>
+            <span style="color:var(--text-3);font-size:12px">▾</span>
+          </button>
+          <div class="dropdown" id="userDropdown" style="min-width:210px">
+            <button class="menu-item" data-act="profile">👤 个人资料</button>
+            <button class="menu-item" data-act="settings">⚙️ 偏好设置</button>
+            <div class="menu-divider"></div>
+            <button class="menu-item danger" data-act="logout">🚪 退出登录</button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="page" id="page"></main>
+  </div>
+</div>
+
+<!-- ===== 抽屉 ===== -->
+<div class="drawer-mask" id="drawerMask"></div>
+<aside class="drawer" id="drawer"></aside>
+
+<!-- ===== Modal ===== -->
+<div class="modal-mask" id="modalMask"><div class="modal" id="modalBox"></div></div>
+
+<!-- ===== Toast ===== -->
+<div class="toast-wrap" id="toastWrap"></div>
+<script src="vendor/three.min.js"></script>
+<script src="vendor/OrbitControls.js"></script>
+<script>
+"use strict";
+/* ================= 工具函数 ================= */
+const $ = (s, el) => (el || document).querySelector(s);
+const $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
+const esc = s => String(s == null ? "" : s)
+  .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+
+/* ================= 3D 基础设施 ================= */
+const HAS_THREE = (typeof THREE !== "undefined");
+function webglOK() {
+  if (!HAS_THREE) return false;
+  try {
+    const c = document.createElement("canvas");
+    const gl = c.getContext("webgl") || c.getContext("experimental-webgl");
+    return !!gl;
+  } catch (e) { return false; }
+}
+function isDark() { return document.documentElement.dataset.theme === "dark"; }
+/* 主题色板（供 3D 场景取色，保持与 CSS 变量一致） */
+function theme3D() {
+  return isDark()
+    ? { bg: 0x14171e, fog: 0x14171e, grid: 0x2a3040, ground: 0x1a1e27, label: "#e9ebf1", shadow: 0.35 }
+    : { bg: 0xf7f8fb, fog: 0xf7f8fb, grid: 0xdde3ee, ground: 0xffffff, label: "#636672", shadow: 0.14 };
+}
+
+const AVATAR_COLORS = ["#0a84ff","#5e5ce6","#a259ff","#ff375f","#ff9f0a","#28c76f",
+  "#00b8a9","#ff6b6b","#4d96ff","#9d4edd","#2ec4b6","#e36414"];
+function avatarColor(name) {
+  let h = 0;
+  for (const ch of String(name)) h = ((h * 31) + ch.codePointAt(0)) >>> 0;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+function avatarHTML(name, size) {
+  size = size || 38;
+  const initial = String(name || "?").trim().charAt(0);
+  return '<span class="avatar" style="width:' + size + 'px;height:' + size +
+    'px;background:' + avatarColor(name) + ';font-size:' + Math.round(size * 0.42) +
+    'px">' + esc(initial) + "</span>";
+}
+
+/* 空状态插画：简洁线条风 SVG，深浅主题自适应 */
+function emptySVG() {
+  return '<svg width="76" height="76" viewBox="0 0 76 76" fill="none" aria-hidden="true">' +
+    '<circle cx="38" cy="38" r="31" fill="var(--accent-soft)"/>' +
+    '<rect x="27" y="23" width="21" height="27" rx="3.5" fill="var(--card)" stroke="#0a84ff" stroke-width="2.5"/>' +
+    '<line x1="32.5" y1="31.5" x2="43.5" y2="31.5" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round"/>' +
+    '<line x1="32.5" y1="37.5" x2="43.5" y2="37.5" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>' +
+    '<line x1="32.5" y1="43.5" x2="39" y2="43.5" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round" opacity=".3"/>' +
+    '<circle cx="49" cy="49" r="9.5" fill="var(--card)" stroke="#0a84ff" stroke-width="2.5"/>' +
+    '<line x1="55.8" y1="55.8" x2="61.5" y2="61.5" stroke="#0a84ff" stroke-width="2.5" stroke-linecap="round"/></svg>';
+}
+function emptyHTML(text) {
+  return '<div class="empty">' + emptySVG() + '<div class="e-text">' + esc(text) + "</div></div>";
+}
+
+function toast(msg, icon) {  icon = icon || "✅";
+  const wrap = $("#toastWrap");
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.innerHTML = "<span>" + icon + "</span><span>" + esc(msg) + "</span>";
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.style.animation = "toastOut .25s ease forwards";
+    setTimeout(() => el.remove(), 260);
+  }, 2400);
+}
+
+/* ================= Mock 数据 ================= */
+const CURRENT_USER = "Yuan";
+
+const DB = {
+  approvals: [
+    { id: "a1", applicant: "吴文斌", dept: "销售部", type: "报价审批", detail: "XX小区配电工程报价 ¥28.60万", amount: "¥28.60万",
+      submitted: "10-21 09:12", status: "待审批", reason: "XX小区配电工程 GCS 低压柜 28 面、配电箱 60 台报价，毛利率 18%，已附成本核算表。", quoteId: "Q202610001" },
+    { id: "a2", applicant: "李建国", dept: "钣金车间", type: "采购审批", detail: "冷轧钢板 12 吨 ¥68,400", amount: "¥68,400",
+      submitted: "10-21 08:45", status: "待审批", reason: "补充 2mm 冷轧钢板库存 12 吨，用于 GCS 柜体生产，已比价三家钢贸商。" },
+    { id: "a3", applicant: "郑建军", dept: "技术部", type: "图纸审批", detail: "KYN28-12一次系统图 V3", amount: "V3 版",
+      submitted: "10-20 16:30", status: "待审批", reason: "根据客户反馈修订母线室隔板结构，V3 版已内部校核，请审批后发放车间。" },
+    { id: "a4", applicant: "何美玲", dept: "行政部", type: "用章", detail: "供货合同 2 份", amount: "2 份",
+      submitted: "10-20 14:05", status: "待审批", reason: "与 XX 变电站项目供货合同用章，共 2 份，合同条款已法务审核。" },
+    { id: "a5", applicant: "周晓琳", dept: "销售部", type: "报销", detail: "差旅费 ¥3,240", amount: "¥3,240",
+      submitted: "10-20 10:22", status: "已通过", reason: "10 月 15 日至 17 日杭州客户拜访差旅费，含交通与住宿，票据齐全。" },
+    { id: "a6", applicant: "赵小敏", dept: "成套车间", type: "请假", detail: "调休 1 天", amount: "1 天",
+      submitted: "10-20 09:00", status: "已通过", reason: "周末加班调休 1 天（10 月 18 日），班组工作已安排妥当。" },
+    { id: "a7", applicant: "李建国", dept: "钣金车间", type: "采购审批", detail: "塑粉 500kg ¥9,800", amount: "¥9,800",
+      submitted: "10-19 15:40", status: "已驳回", reason: "库存塑粉尚有 800kg，暂不需采购，请消化库存后再申请。" },
+    { id: "a8", applicant: "郑建军", dept: "技术部", type: "图纸审批", detail: "GCS柜体钣金展开图", amount: "定稿",
+      submitted: "10-18 18:20", status: "已通过", reason: "GCS 柜体激光下料图已校核无误，同意发放车间执行。" }
+  ],
+
+  depts: [
+    { id: "d1", name: "钣金车间", children: [
+      { id: "d11", name: "激光下料组", children: [] },
+      { id: "d12", name: "折弯焊接组", children: [] }
+    ]},
+    { id: "d2", name: "成套车间", children: [] },
+    { id: "d3", name: "质检部", children: [] },
+    { id: "d4", name: "销售部", children: [] },
+    { id: "d5", name: "技术部", children: [] },
+    { id: "d6", name: "行政部", children: [] }
+  ],
+
+  members: [
+    { name: "Yuan", title: "系统管理员", dept: "技术部", phone: "138-0000-0001", email: "yuan@jnjd.com" },
+    { name: "李建国", title: "钣金车间主任", dept: "钣金车间", phone: "138-0000-0002", email: "lijianguo@jnjd.com" },
+    { name: "张伟强", title: "激光下料组长", dept: "钣金车间 · 激光下料组", phone: "138-0000-0003", email: "zhangweiqiang@jnjd.com" },
+    { name: "刘志刚", title: "折弯组长", dept: "钣金车间 · 折弯焊接组", phone: "138-0000-0004", email: "liuzhigang@jnjd.com" },
+    { name: "陈国栋", title: "成套车间主任", dept: "成套车间", phone: "138-0000-0005", email: "chenguodong@jnjd.com" },
+    { name: "赵小敏", title: "装配组长", dept: "成套车间", phone: "138-0000-0006", email: "zhaoxiaomin@jnjd.com" },
+    { name: "孙海涛", title: "质检主管", dept: "质检部", phone: "138-0000-0007", email: "sunhaitao@jnjd.com" },
+    { name: "周晓琳", title: "销售经理", dept: "销售部", phone: "138-0000-0008", email: "zhouxiaolin@jnjd.com" },
+    { name: "吴文斌", title: "销售专员", dept: "销售部", phone: "138-0000-0009", email: "wuwenbin@jnjd.com" },
+    { name: "郑建军", title: "电气设计工程师", dept: "技术部", phone: "138-0000-0010", email: "zhengjianjun@jnjd.com" },
+    { name: "何美玲", title: "行政主管", dept: "行政部", phone: "138-0000-0011", email: "hemeiling@jnjd.com" },
+    { name: "钱芳", title: "行政专员", dept: "行政部", phone: "138-0000-0012", email: "qianfang@jnjd.com" }
+  ],
+
+  folders: [
+    { id: "f1", name: "图纸资料" },
+    { id: "f2", name: "报价单" },
+    { id: "f3", name: "质检报告" },
+    { id: "f4", name: "工艺文件" }
+  ],
+
+  files: [
+    { id: "doc1", folder: "f1", name: "KYN28-12一次系统图 V3.dwg", type: "design", size: "8.6 MB", updated: "10-21 09:30", updater: "郑建军" },
+    { id: "doc2", folder: "f1", name: "GCS柜体钣金展开图.pdf", type: "pdf", size: "12.4 MB", updated: "10-20 17:12", updater: "郑建军" },
+    { id: "doc3", folder: "f1", name: "PZ30配电箱装配图.dwg", type: "design", size: "6.2 MB", updated: "10-19 11:05", updater: "郑建军" },
+    { id: "doc4", folder: "f2", name: "XX小区配电工程报价单.xlsx", type: "excel", size: "486 KB", updated: "10-21 10:02", updater: "吴文斌" },
+    { id: "doc5", folder: "f2", name: "GCS低压柜报价模板.xlsx", type: "excel", size: "320 KB", updated: "10-18 15:44", updater: "周晓琳" },
+    { id: "doc6", folder: "f3", name: "10月开关柜出厂试验报告.pdf", type: "pdf", size: "3.8 MB", updated: "10-20 09:18", updater: "孙海涛" },
+    { id: "doc7", folder: "f3", name: "钣金件首检记录表_10月.xlsx", type: "excel", size: "640 KB", updated: "10-17 14:26", updater: "孙海涛" },
+    { id: "doc8", folder: "f4", name: "折弯工艺规范_2026版.docx", type: "word", size: "1.1 MB", updated: "10-15 10:00", updater: "李建国" },
+    { id: "doc9", folder: "f4", name: "喷塑作业指导书.pdf", type: "pdf", size: "2.6 MB", updated: "10-12 16:33", updater: "李建国" }
+  ],
+
+  quotes: [
+    { id: "Q202610001", customer: "XX小区物业", project: "XX小区配电工程", contact: "王经理", phone: "139-0000-1001",
+      salesperson: "吴文斌", status: "待审批", created: "10-21 09:12",
+      remark: "GCS 低压柜 28 面、PZ30 配电箱 60 台，含安装调试，交期 45 天。",
+      items: [
+        { product: "GCS低压抽出式开关柜", spec: "GCS 2200×1000×800", material: "2mm冷轧钢板", qty: 28, price: 8600 },
+        { product: "PZ30配电箱", spec: "PZ30-24回路", material: "1.5mm冷轧钢板", qty: 60, price: 780 }
+      ],
+      comments: [
+        { user: "郑建军", text: "一次方案已确认，柜体尺寸无问题，可以报价。", time: "10-21 08:40" },
+        { user: "周晓琳", text: "@吴文斌 客户希望交期压缩到40天，看看产能够不够。", time: "10-21 09:05" }
+      ] },
+    { id: "Q202610002", customer: "XX市变电建设公司", project: "XX变电站10kV配电工程", contact: "李总", phone: "139-0000-1002",
+      salesperson: "周晓琳", status: "已批准", created: "10-18 14:20",
+      remark: "含现场安装指导，母线排由我方配套供应。",
+      items: [
+        { product: "KYN28-12铠装中置柜", spec: "KYN28-12 1250A", material: "2mm覆铝锌板", qty: 12, price: 68000 },
+        { product: "母线排配套", spec: "TMY-80×8", material: "铜排镀锡", qty: 1, price: 45000 }
+      ],
+      comments: [
+        { user: "Yuan", text: "技术审核通过，图纸与报价一致。", time: "10-19 10:12" }
+      ] },
+    { id: "Q202610003", customer: "工业园区管委会", project: "园区路灯配电箱改造", contact: "陈主任", phone: "139-0000-1003",
+      salesperson: "吴文斌", status: "草稿", created: "10-21 08:30",
+      remark: "草稿，安装费用待核算。",
+      items: [
+        { product: "户外配电箱", spec: "XL-21 IP54", material: "2mm冷轧钢板喷塑", qty: 40, price: 1950 }
+      ],
+      comments: [] },
+    { id: "Q202610004", customer: "XX商业广场", project: "商业综合体配电工程", contact: "赵总", phone: "139-0000-1004",
+      salesperson: "周晓琳", status: "已转订单", created: "10-15 16:40",
+      remark: "已转 ERP 订单 ORD-2026-1031，车间已排产。",
+      items: [
+        { product: "GCS低压抽出式开关柜", spec: "GCS 2200×800×800", material: "2mm冷轧钢板", qty: 36, price: 9800 },
+        { product: "PZ30配电箱", spec: "PZ30-18回路", material: "1.5mm冷轧钢板", qty: 80, price: 680 }
+      ],
+      comments: [
+        { user: "周晓琳", text: "客户已确认，申请转订单排产。", time: "10-16 09:20" },
+        { user: "陈国栋", text: "收到，成套车间已安排生产计划。", time: "10-16 11:05" }
+      ] },
+    { id: "Q202610005", customer: "老旧小区改造办", project: "老旧小区配电改造", contact: "孙科长", phone: "139-0000-1005",
+      salesperson: "吴文斌", status: "已驳回", created: "10-14 10:15",
+      remark: "价格偏高被驳回，需重新核算成本后提交。",
+      items: [
+        { product: "PZ30配电箱", spec: "PZ30-12回路", material: "1.5mm冷轧钢板", qty: 120, price: 1100 }
+      ],
+      comments: [
+        { user: "Yuan", text: "@吴文斌 单价高于市场均价12%，建议优化钣金工艺降本后再报。", time: "10-14 15:30" }
+      ] },
+    { id: "Q202610006", customer: "XX物流园", project: "物流园KYN28配电工程", contact: "刘经理", phone: "139-0000-1006",
+      salesperson: "周晓琳", status: "待审批", created: "10-20 17:05",
+      remark: "含直流屏 1 面，客户要求 11 月中旬到货。",
+      items: [
+        { product: "KYN28-12铠装中置柜", spec: "KYN28-12 630A", material: "2mm覆铝锌板", qty: 8, price: 72000 },
+        { product: "直流屏", spec: "GZDW-40AH", material: "2mm冷轧钢板", qty: 1, price: 68000 }
+      ],
+      comments: [] }
+  ],
+
+  notifications: [
+    { id: "n1", icon: "✅", bg: "var(--green-soft)", title: "审批提醒", desc: "吴文斌提交了报价审批申请，等待你的审批", time: "10 分钟前", unread: true, quote: "Q202610001" },
+    { id: "n2", icon: "💬", bg: "var(--blue-soft)", title: "新消息", desc: "郑建军在报价单 Q202610006 的评论中 @ 了你", time: "32 分钟前", unread: true, quote: "Q202610006" },
+    { id: "n3", icon: "📅", bg: "var(--orange-soft)", title: "会议提醒", desc: "14:00 生产例会即将开始，地点：车间会议室", time: "1 小时前", unread: true },
+    { id: "n4", icon: "📋", bg: "var(--purple-soft)", title: "任务指派", desc: "李建国将报价单 Q202610001 转交给你跟进", time: "2 小时前", unread: true, quote: "Q202610001" },
+    { id: "n5", icon: "📁", bg: "var(--blue-soft)", title: "文档更新", desc: "孙海涛上传了「10月开关柜出厂试验报告.pdf」", time: "3 小时前", unread: true }
+  ],
+
+  feed: [
+    { color: "var(--green)", text: "<b>孙海涛</b> 完成出厂试验，12 面 10kV 开关柜全部合格", time: "10-21 09:48" },
+    { color: "var(--orange)", text: "<b>吴文斌</b> 提交了报价审批「XX小区配电工程 ¥286,000」", time: "10-21 09:15" },
+    { color: "var(--purple)", text: "<b>郑建军</b> 上传了新图纸「KYN28-12一次系统图 V3.dwg」", time: "10-21 08:57" },
+    { color: "var(--accent)", text: "<b>李建国</b> 提交了采购审批「冷轧钢板 12 吨」", time: "10-21 08:32" },
+    { color: "var(--accent)", text: "<b>张伟强</b> 开始执行「GCS低压柜体钣金下料」", time: "10-20 17:20" }
+  ]
+};
+
+/* ================= 全局状态 ================= */
+const state = {
+  page: "dashboard",
+  apprFilter: "全部",
+  quoteFilter: "全部",
+  quoteQuery: "",
+  contactQuery: "",
+  contactDept: "全部",
+  docFolder: "f1",
+  collapsedDepts: {},
+  todos: [
+    { text: "审批吴文斌的报价申请（XX小区配电工程）", due: "今天", done: false, quoteId: "Q202610001" },
+    { text: "审批周晓琳的报价申请（物流园KYN28配电工程）", due: "今天", done: false, quoteId: "Q202610006" },
+    { text: "参加 14:00 生产例会", due: "今天", done: false },
+    { text: "跟进 KYN28 柜体折弯加工进度", due: "今天", done: false },
+    { text: "整理 10 月质检报告归档", due: "已完成", done: true }
+  ]
+};
+
+/* ============ 应用注册表（平台化：新增应用只在这里追加一行） ============ */
+/* 每个应用 {code, name, icon, group, desc}：
+   - 菜单、顶栏标题、应用中心卡片全部由该表驱动自动生成
+   - 渲染函数在下方的 PAGE_RENDERERS 中按 code 注册 */
+const APPS = [
+  { code: "dashboard", name: "工作台",   icon: "🏠", group: "主导航", desc: "数据概览、待办与团队动态" },
+  { code: "quotes",    name: "报价管理", icon: "💰", group: "主导航", desc: "报价登记、审批与转订单全流程" },
+  { code: "approvals", name: "审批中心", icon: "✅", group: "主导航", desc: "报价、采购、图纸等审批统一处理" },
+  { code: "contacts",  name: "通讯录",   icon: "👥", group: "组织",   desc: "组织架构与成员联系方式" },
+  { code: "docs",      name: "文档中心", icon: "📁", group: "组织",   desc: "图纸、报价单、质检报告统一管理" },
+  { code: "appstore",  name: "应用中心", icon: "🧩", group: "平台",   desc: "应用接入与管理" }
+];
+const PAGE_TITLES = {};
+APPS.forEach(a => { PAGE_TITLES[a.code] = a.name; });
+
+/* 菜单由注册表渲染（不写死 HTML） */
+function renderNav() {
+  const nav = $("#nav");
+  let html = "", lastGroup = null;
+  APPS.forEach(a => {
+    if (a.group !== lastGroup) {
+      html += '<div class="nav-group">' + esc(a.group) + "</div>";
+      lastGroup = a.group;
+    }
+    html += '<button class="nav-item' + (state.page === a.code ? " active" : "") +
+      '" data-page="' + a.code + '" data-tip="' + esc(a.name) + '">' +
+      '<span class="nav-icon">' + a.icon + "</span>" +
+      '<span class="nav-label">' + esc(a.name) + "</span></button>";
+  });
+  nav.innerHTML = html;
+  $$("#nav .nav-item").forEach(b => b.addEventListener("click", () => goPage(b.dataset.page)));
+}
+
+/* ================= 抽屉 / 弹窗 ================= */
+function openDrawer(html, footHTML) {
+  const drawer = $("#drawer");
+  drawer.innerHTML =
+    '<div class="drawer-head"><h3></h3>' +
+    '<button class="icon-btn" onclick="closeDrawer()" title="关闭">✕</button></div>' +
+    '<div class="drawer-body"></div>' +
+    (footHTML ? '<div class="drawer-foot"></div>' : "");
+  drawer.querySelector(".drawer-head h3").outerHTML = ""; // 标题由内容决定
+  drawer.querySelector(".drawer-body").innerHTML = html;
+  if (footHTML) drawer.querySelector(".drawer-foot").innerHTML = footHTML;
+  drawer.classList.add("show");
+  $("#drawerMask").classList.add("show");
+}
+function closeDrawer() {
+  $("#drawer").classList.remove("show");
+  $("#drawerMask").classList.remove("show");
+}
+function openModal(title, bodyHTML, onOk, okText) {
+  const box = $("#modalBox");
+  box.innerHTML = "<h3>" + esc(title) + "</h3>" + bodyHTML +
+    '<div class="modal-actions">' +
+    '<button class="btn btn-ghost" onclick="closeModal()">取消</button>' +
+    '<button class="btn btn-primary" id="modalOk">' + esc(okText || "确定") + "</button></div>";
+  $("#modalMask").classList.add("show");
+  $("#modalOk").onclick = onOk;
+  const input = box.querySelector("input");
+  if (input) { input.focus(); input.onkeydown = e => { if (e.key === "Enter") $("#modalOk").click(); }; }
+}
+function closeModal() {
+  $("#modalMask").classList.remove("show");
+  $("#modalBox").classList.remove("wide");
+}
+
+/* ================= 页面：工作台 ================= */
+function greetingText() {
+  const h = new Date().getHours();
+  if (h < 6) return "夜深了";
+  if (h < 12) return "上午好";
+  if (h < 14) return "中午好";
+  if (h < 18) return "下午好";
+  return "晚上好";
+}
+
+/* 近7天报价金额（3D 柱状图与 SVG 折线图共用同一数据源） */
+const TREND_DATA = [12.8, 45.6, 8.2, 28.6, 33.4, 15.2, 72.0];
+const TREND_LABELS = ["10-15", "10-16", "10-17", "10-18", "10-19", "10-20", "10-21"];
+
+function weeklyChartSVG() {
+  const data = TREND_DATA;
+  const labels = TREND_LABELS;
+  const W = 620, H = 230, P = { l: 36, r: 14, t: 16, b: 30 };
+  const max = 80;
+  const x = i => P.l + (i * (W - P.l - P.r)) / (data.length - 1);
+  const y = v => H - P.b - (v / max) * (H - P.t - P.b);
+  let line = "", area = "";
+  data.forEach((v, i) => {
+    line += (i === 0 ? "M" : "L") + x(i).toFixed(1) + "," + y(v).toFixed(1) + " ";
+  });
+  area = line + "L" + x(data.length - 1).toFixed(1) + "," + (H - P.b) +
+         " L" + x(0).toFixed(1) + "," + (H - P.b) + " Z";
+  let dots = "", grids = "", xlabels = "";
+  data.forEach((v, i) => {
+    dots += '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(v).toFixed(1) +
+      '" r="5" fill="var(--accent)" stroke="var(--card)" stroke-width="2.5"><title>' +
+      labels[i] + "：报价 " + v + " 万元</title></circle>" +
+      '<text x="' + x(i).toFixed(1) + '" y="' + (y(v) - 12).toFixed(1) +
+      '" text-anchor="middle" font-size="11" fill="var(--text-2)" font-weight="600">' + v + "</text>";
+    xlabels += '<text x="' + x(i).toFixed(1) + '" y="' + (H - 10) +
+      '" text-anchor="middle" font-size="11" fill="var(--text-3)">' + labels[i] + "</text>";
+  });
+  [0, 20, 40, 60, 80].forEach(v => {
+    grids += '<line x1="' + P.l + '" y1="' + y(v) + '" x2="' + (W - P.r) + '" y2="' + y(v) +
+      '" stroke="var(--border)" stroke-width="1" stroke-dasharray="4 4"/>' +
+      '<text x="' + (P.l - 8) + '" y="' + (y(v) + 4) + '" text-anchor="end" font-size="10" fill="var(--text-3)">' + v + "</text>";
+  });
+  return '<svg viewBox="0 0 ' + W + " " + H + '" style="width:100%;height:auto;display:block">' +
+    "<defs><linearGradient id=\"areaGrad\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">" +
+    '<stop offset="0" stop-color="#0a84ff" stop-opacity="0.28"/>' +
+    '<stop offset="1" stop-color="#0a84ff" stop-opacity="0.02"/></linearGradient></defs>' +
+    grids + '<path d="' + area + '" fill="url(#areaGrad)"/>' +
+    '<path d="' + line + '" fill="none" stroke="#0a84ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+    dots + xlabels + "</svg>";
+}
+
+function renderDashboard() {
+  const pendingQuotes = DB.quotes.filter(q => q.status === "待审批").length;
+  const quoteTotal = DB.quotes.reduce((s, q) => s + quoteGrandTotal(q), 0);
+  const stats = [
+    { icon: "💰", num: "18", label: "本月报价单", go: "quotes" },
+    { icon: "📊", num: fmtMoney(quoteTotal), label: "报价总金额", go: "quotes" },
+    { icon: "📈", num: "42%", label: "报价转化率", go: "quotes" },
+    { icon: "✅", num: pendingQuotes, label: "待审批报价", go: "approvals" }
+  ];
+  const today = new Date();
+  const dateStr = (today.getMonth() + 1) + "月" + today.getDate() + "日 星期" +
+    ["日", "一", "二", "三", "四", "五", "六"][today.getDay()];
+
+  return '<div class="greet">' + greetingText() + "，" + esc(CURRENT_USER) + " 👋</div>" +
+    '<div class="greet-sub">' + dateStr + " · 本月已报价 18 单，有 " + pendingQuotes + " 条报价待审批，加油！</div>" +
+    '<div class="stat-grid">' + stats.map(s =>
+      '<div class="card stat-card" ' + (s.go ? 'onclick="goPage(\'' + s.go + '\')"' : 'onclick="toast(\'演示数据，暂未接入\', \'💡\')"') + ">" +
+      '<div class="stat-icon" style="background:var(--accent-soft)">' + s.icon + "</div>" +
+      '<div><div class="stat-num">' + s.num + '</div><div class="stat-label">' + s.label + "</div></div>" +
+      "</div>").join("") + "</div>" +
+    '<div class="dash-grid">' +
+      '<div class="dash-col">' +
+        '<div class="card pad"><div class="panel-head"><h3>📈 近7天报价金额趋势（万元）</h3><span class="more">查看报表 →</span></div>' +
+          (webglOK()
+            ? '<div id="trend3d"><div class="trend-tip" id="trendTip"></div><div class="trend-hint">拖拽旋转 · 悬停查看数值</div></div>'
+            : weeklyChartSVG()) + "</div>" +
+        '<div class="card pad"><div class="panel-head"><h3>🕒 最新动态</h3><span class="more">全部动态 →</span></div>' +
+          '<div class="timeline">' + DB.feed.map(f =>
+            '<div class="tl-item"><span class="tl-dot" style="background:' + f.color + '"></span>' +
+            '<div class="tl-text">' + f.text + '</div><div class="tl-time">' + f.time + "</div></div>"
+          ).join("") + "</div></div>" +
+      "</div>" +
+      '<div class="dash-col">' +
+        '<div class="card pad"><div class="panel-head"><h3>📌 我的待办</h3><span class="more" onclick="goPage(\'quotes\')">报价管理 →</span></div>' +
+          '<div id="dashTodos">' + state.todos.map(todoItemHTML).join("") + "</div></div>" +
+        '<div class="card pad"><div class="panel-head"><h3>📅 今日会议</h3></div>' +
+          '<div class="todo-item"><span style="font-size:18px">🏭</span><span class="todo-text">生产例会<br><span style="font-size:11.5px;color:var(--text-3)">14:00 · 车间会议室 · 李建国主持</span></span><span class="badge blue">即将开始</span></div>' +
+          '<div class="todo-item"><span style="font-size:18px">📦</span><span class="todo-text">XX变电站项目发货协调会<br><span style="font-size:11.5px;color:var(--text-3)">16:30 · 会议室</span></span><span class="badge gray">未开始</span></div>' +
+        "</div>" +
+      "</div>" +
+    "</div>";
+}
+
+function toggleTodo(i) {
+  state.todos[i].done = !state.todos[i].done;
+  const list = $("#dashTodos");
+  if (list) list.innerHTML = state.todos.map(todoItemHTML).join("");
+  toast(state.todos[i].done ? "已完成该待办" : "已重新打开该待办", state.todos[i].done ? "🎉" : "↩️");
+}
+
+/* ================= 页面：报价管理 ================= */
+const QUOTE_STATUS_BADGE = { "草稿": "gray", "待审批": "orange", "已批准": "green", "已驳回": "red", "已转订单": "blue" };
+const QUOTE_STATUSES = ["全部", "草稿", "待审批", "已批准", "已驳回", "已转订单"];
+let quoteSeq = 10007;
+
+/* ============ 报价字段集中配置（改字段只改这里） ============ */
+/* 表头字段：增删改字段、必填、选项都在这里配，表单与详情自动跟随 */
+const QUOTE_FIELDS = [
+  { key: "customer",    label: "客户名称",   type: "text",   required: true,  placeholder: "如：XX小区物业" },
+  { key: "project",     label: "项目名称",   type: "text",   required: true,  placeholder: "如：XX小区配电工程" },
+  { key: "contact",     label: "客户联系人", type: "text",   placeholder: "联系人姓名" },
+  { key: "phone",       label: "联系电话",   type: "text",   placeholder: "手机号码" },
+  { key: "salesperson", label: "业务员",     type: "select", options: ["吴文斌", "周晓琳"] },
+  { key: "delivery",    label: "交期要求",   type: "text",   placeholder: "如：45天" },
+  { key: "taxRate",     label: "税率",       type: "select", options: ["13%", "9%", "6%", "0%"], def: "13%" },
+  { key: "remark",      label: "备注",       type: "text",   full: true,       placeholder: "补充说明（选填）" }
+];
+/* 报价明细列配置 */
+const QUOTE_ITEM_COLUMNS = [
+  { key: "product",  label: "产品名称", type: "text",   width: "22%", required: true },
+  { key: "spec",     label: "规格型号", type: "text" },
+  { key: "material", label: "材质",     type: "text" },
+  { key: "qty",      label: "数量",     type: "number", width: "64px",  def: 1 },
+  { key: "price",    label: "单价(元)", type: "number", width: "104px", def: 0 }
+];
+/* 详情抽屉信息行配置 */
+const QUOTE_INFO_ROWS = [
+  { label: "客户联系人", value: q => esc(q.contact) + " · " + esc(q.phone) },
+  { label: "业务员",     value: q => esc(q.salesperson) },
+  { label: "创建时间",   value: q => esc(q.created) },
+  { label: "税率",       value: q => esc(q.taxRate || "13%") },
+  { label: "税额",       value: q => '<span class="tnum">' + fmtMoney(quoteTax(q)) + "</span>" }
+];
+
+function fmtMoney(n) {
+  n = Number(n) || 0;
+  if (n >= 10000) return "¥" + (n / 10000).toFixed(2) + "万";
+  return "¥" + n.toLocaleString("zh-CN");
+}
+function quoteAmount(q) {
+  return (q.items || []).reduce((s, it) => s + (Number(it.qty) || 0) * (Number(it.price) || 0), 0);
+}
+/* 小计（未税）、税额、价税合计 */
+function quoteTaxRateNum(q) {
+  return (parseFloat(String(q.taxRate || "13%").replace("%", "")) / 100) || 0;
+}
+function quoteTax(q) { return quoteAmount(q) * quoteTaxRateNum(q); }
+function quoteGrandTotal(q) { return quoteAmount(q) + quoteTax(q); }
+function lineAmount(it) { return (Number(it.qty) || 0) * (Number(it.price) || 0); }
+function nowHM() {
+  const d = new Date();
+  return "10-21 " + d.getHours() + ":" + String(d.getMinutes()).padStart(2, "0");
+}
+
+/* ---- 报价列表 ---- */
+function renderQuotes() {
+  const pending = DB.quotes.filter(q => q.status === "待审批").length;
+  const total = DB.quotes.reduce((s, q) => s + quoteGrandTotal(q), 0);
+  const stats = [
+    { icon: "💰", num: "18", label: "本月报价单" },
+    { icon: "📊", num: fmtMoney(total), label: "报价总金额（含税）" },
+    { icon: "📈", num: "42%", label: "报价转化率" },
+    { icon: "✅", num: pending, label: "待审批报价" }
+  ];
+  return '<div class="page-head"><div><h2>报价管理</h2><p>报价登记、审批与转订单全流程管理</p></div>' +
+    '<button class="btn btn-primary" onclick="openQuoteForm()">➕ 新建报价单</button></div>' +
+    '<div class="stat-grid">' + stats.map(s =>
+      '<div class="card stat-card" style="cursor:default"><div class="stat-icon" style="background:var(--accent-soft)">' + s.icon + "</div>" +
+      '<div><div class="stat-num">' + s.num + '</div><div class="stat-label">' + s.label + "</div></div></div>"
+    ).join("") + "</div>" +
+    '<div class="card pad"><div class="filter-bar" style="margin-bottom:16px">' +
+    '<div class="search-box" style="width:300px"><span class="s-icon">🔍</span>' +
+    '<input id="quoteSearch" placeholder="搜索客户名称 / 项目名称 / 单号…" value="' + esc(state.quoteQuery) + '" autocomplete="off"></div>' +
+    '<div class="seg">' + QUOTE_STATUSES.map(s =>
+      '<button class="' + (state.quoteFilter === s ? "active" : "") + '" onclick="setQuoteFilter(\'' + s + '\')">' + s + "</button>"
+    ).join("") + "</div></div>" +
+    '<div style="overflow-x:auto"><table class="file-table"><thead><tr>' +
+    "<th>报价单号</th><th>客户名称</th><th>项目名称</th><th>金额</th><th>业务员</th><th>状态</th><th>创建时间</th></tr></thead>" +
+    '<tbody id="quoteTbody">' + quoteRowsHTML() + "</tbody></table></div></div>";
+}
+
+function quoteRowsHTML() {
+  const f = state.quoteFilter, kw = state.quoteQuery.trim().toLowerCase();
+  const list = DB.quotes.filter(q => {
+    const okS = f === "全部" || q.status === f;
+    const okK = !kw || (q.id + q.customer + q.project + q.salesperson).toLowerCase().indexOf(kw) >= 0;
+    return okS && okK;
+  });
+  if (!list.length)
+    return '<tr><td colspan="7">' + emptyHTML("没有符合条件的报价单，换个筛选条件试试") + "</td></tr>";
+  return list.map(q =>
+    '<tr style="cursor:pointer" onclick="openQuoteDrawer(\'' + q.id + '\')">' +
+    '<td style="font-weight:600;color:var(--accent)">' + esc(q.id) + "</td>" +
+    "<td>" + esc(q.customer) + "</td><td>" + esc(q.project) + "</td>" +
+    '<td class="tnum" style="font-weight:700">' + fmtMoney(quoteGrandTotal(q)) + "</td>" +
+    "<td>" + esc(q.salesperson) + "</td>" +
+    '<td><span class="badge ' + QUOTE_STATUS_BADGE[q.status] + '">' + q.status + "</span></td>" +
+    "<td>" + esc(q.created) + "</td></tr>"
+  ).join("");
+}
+
+function setQuoteFilter(s) { state.quoteFilter = s; render(); }
+function bindQuotes() {
+  const input = $("#quoteSearch");
+  if (input) input.addEventListener("input", e => {
+    state.quoteQuery = e.target.value;
+    const tb = $("#quoteTbody");
+    if (tb) tb.innerHTML = quoteRowsHTML();
+  });
+}
+
+/* ---- 报价详情抽屉 ---- */
+function quoteStepsHTML(q) {
+  function step(cls, title, sub) {
+    return '<div class="step ' + cls + '"><span class="step-dot"></span><div class="step-title">' + title +
+      '</div><div class="step-sub">' + sub + "</div></div>";
+  }
+  let s1, s2, s3;
+  if (q.status === "草稿") {
+    s1 = step("current", "提交报价", "待提交 · 当前节点");
+    s2 = step("", "技术审核", "等待提交");
+    s3 = step("", "领导审批", "等待提交");
+  } else if (q.status === "待审批") {
+    s1 = step("done", "提交报价", esc(q.salesperson) + " · " + esc(q.created));
+    s2 = step("current", "技术审核", "审核中 · 当前节点");
+    s3 = step("", "领导审批", "等待技术审核");
+  } else if (q.status === "已驳回") {
+    s1 = step("done", "提交报价", esc(q.salesperson) + " · " + esc(q.created));
+    s2 = step("reject", "技术审核", "已驳回，请修改后重新提交");
+    s3 = step("", "领导审批", "—");
+  } else {
+    s1 = step("done", "提交报价", esc(q.salesperson) + " · " + esc(q.created));
+    s2 = step("done", "技术审核", "已通过");
+    s3 = step("done", "领导审批", q.status === "已转订单" ? "已批准 · 已转订单" : "已批准");
+  }
+  return '<div class="step-timeline">' + s1 + s2 + s3 + "</div>";
+}
+
+function openQuoteDrawer(id) {
+  const q = DB.quotes.find(x => x.id === id);
+  if (!q) return;
+  const amt = quoteAmount(q), tax = quoteTax(q), grand = quoteGrandTotal(q);
+  const itemsRows = (q.items || []).map((it, i) =>
+    "<tr><td>" + (i + 1) + "</td>" + QUOTE_ITEM_COLUMNS.map(c => {
+      const v = it[c.key];
+      const txt = (v == null || v === "") ? "—" : (c.key === "price" ? fmtMoney(v) : esc(String(v)));
+      return "<td>" + txt + "</td>";
+    }).join("") + '<td class="tnum" style="font-weight:600;white-space:nowrap">' + fmtMoney(lineAmount(it)) + "</td></tr>"
+  ).join("");
+  const commentsHTML = (q.comments || []).map(c =>
+    '<div class="comment-item">' + avatarHTML(c.user, 32) +
+    '<div class="comment-body"><div class="comment-head"><b>' + esc(c.user) + '</b><span class="comment-time">' +
+    esc(c.time) + "</span></div>" +
+    '<div class="comment-text">' + esc(c.text) + "</div></div></div>"
+  ).join("");
+  const emptyComments = '<div class="empty" style="padding:20px">' + emptySVG() +
+    '<div class="e-text">暂无评论，@同事一起来协同吧</div></div>';
+  let foot = "";
+  if (q.status === "草稿") {
+    foot = '<button class="btn btn-ghost" style="flex:1" onclick="decideQuote(\'' + q.id + '\',\'del\')">删除</button>' +
+      '<button class="btn btn-primary" style="flex:2" onclick="decideQuote(\'' + q.id + '\',\'submit\')">📤 提交审批</button>';
+  } else if (q.status === "待审批") {
+    foot = '<button class="btn btn-success" style="flex:1" onclick="decideQuote(\'' + q.id + '\',\'approve\')">✓ 通过</button>' +
+      '<button class="btn btn-danger" style="flex:1" onclick="decideQuote(\'' + q.id + '\',\'reject\')">✕ 驳回</button>';
+  } else if (q.status === "已批准") {
+    foot = '<button class="btn btn-primary" style="flex:1" onclick="decideQuote(\'' + q.id + '\',\'reorder\')">📦 转订单</button>';
+  } else if (q.status === "已驳回") {
+    foot = '<button class="btn btn-primary" style="flex:1" onclick="decideQuote(\'' + q.id + '\',\'resubmit\')">↩️ 修改后重新提交</button>';
+  }
+  openDrawer(
+    '<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">' +
+    '<span class="badge ' + QUOTE_STATUS_BADGE[q.status] + '">' + q.status + '</span>' +
+    '<span style="font-size:12px;color:var(--text-3)">' + esc(q.id) + "</span></div>" +
+    '<h3 style="font-size:18px;font-weight:700;margin-bottom:4px">' + esc(q.project) + "</h3>" +
+    '<div style="font-size:12.5px;color:var(--text-2);margin-bottom:14px">客户：' + esc(q.customer) + "</div>" +
+    QUOTE_INFO_ROWS.map(r =>
+      '<div class="info-row"><span class="k">' + r.label + '</span><span class="v">' + r.value(q) + "</span></div>"
+    ).join("") +
+    '<div class="info-row"><span class="k">价税合计</span><span class="v tnum" style="color:var(--accent);font-weight:700;font-size:16px">' + fmtMoney(grand) + "</span></div>" +
+    '<div style="font-size:13px;font-weight:600;margin:20px 0 6px">报价明细</div>' +
+    '<div style="overflow-x:auto"><table class="items-table"><thead><tr><th>#</th>' +
+    quoteItemHeadHTML("<th>金额</th>") + '</tr></thead>' +
+    "<tbody>" + itemsRows + '</tbody></table></div>' +
+    '<div class="tax-summary">' +
+      '<div>小计（未税）<b class="tnum">' + fmtMoney(amt) + "</b></div>" +
+      '<div>税额（' + esc(q.taxRate || "13%") + '）<b class="tnum">' + fmtMoney(tax) + "</b></div>" +
+      '<div class="grand">价税合计<b class="tnum">' + fmtMoney(grand) + "</b></div>" +
+    "</div>" +
+    (q.remark ? '<div style="font-size:13px;font-weight:600;margin:20px 0 4px">备注</div><div class="desc-box">' + esc(q.remark) + "</div>" : "") +
+    '<div style="font-size:13px;font-weight:600;margin:20px 0 8px">审批流程</div>' + quoteStepsHTML(q) +
+    '<div style="font-size:13px;font-weight:600;margin:20px 0 8px">协同评论（' + (q.comments || []).length + "）</div>" +
+    '<div id="commentList">' + (commentsHTML || emptyComments) + "</div>" +
+    '<div class="comment-form"><input class="input" id="commentInput" style="flex:1" placeholder="留言，可 @同事…" maxlength="200">' +
+    '<button class="btn btn-primary" onclick="postComment(\'' + q.id + '\')">发布</button></div>',
+    foot
+  );
+  const ci = $("#commentInput");
+  if (ci) ci.addEventListener("keydown", e => { if (e.key === "Enter") postComment(q.id); });
+}
+
+function decideQuote(id, action) {
+  const q = DB.quotes.find(x => x.id === id);
+  if (!q) return;
+  const linkAppr = st => {
+    const a = DB.approvals.find(x => x.quoteId === id && x.status === "待审批");
+    if (a) a.status = st;
+  };
+  if (action === "del") {
+    DB.quotes = DB.quotes.filter(x => x.id !== id);
+    closeDrawer(); toast("草稿已删除", "🗑️"); render(); return;
+  }
+  if (action === "submit" || action === "resubmit") {
+    q.status = "待审批";
+    DB.approvals.unshift({
+      id: "a" + Date.now(), applicant: q.salesperson, dept: "销售部", type: "报价审批",
+      detail: q.project + " " + fmtMoney(quoteGrandTotal(q)), amount: fmtMoney(quoteGrandTotal(q)),
+      submitted: nowHM(), status: "待审批", reason: q.remark || "报价审批申请", quoteId: q.id
+    });
+    toast("已提交审批", "📤");
+  } else if (action === "approve") {
+    q.status = "已批准"; linkAppr("已通过"); toast("报价单已批准", "✅");
+  } else if (action === "reject") {
+    q.status = "已驳回"; linkAppr("已驳回"); toast("报价单已驳回", "🚫");
+  } else if (action === "reorder") {
+    q.status = "已转订单"; toast("已转为订单（演示：ERP 订单登记）", "📦");
+  }
+  render();
+  if ($("#drawer").classList.contains("show")) openQuoteDrawer(id);
+}
+
+/* 报价审批单 → 打开报价详情（与审批中心打通） */
+function openApprOrQuote(id) {
+  const a = DB.approvals.find(x => x.id === id);
+  if (a && a.type === "报价审批" && a.quoteId) { openQuoteDrawer(a.quoteId); return; }
+  openApprovalDrawer(id);
+}
+
+/* ---- 协同评论 ---- */
+function postComment(qid) {
+  const q = DB.quotes.find(x => x.id === qid);
+  const input = $("#commentInput");
+  if (!q || !input) return;
+  const text = input.value.trim();
+  if (!text) { toast("评论内容不能为空", "⚠️"); return; }
+  q.comments = q.comments || [];
+  q.comments.push({ user: CURRENT_USER, text: text, time: "刚刚" });
+  openQuoteDrawer(qid);
+  toast("评论已发布", "💬");
+}
+
+/* ---- 新建报价单（报价登记） ---- */
+/* ---- 新建报价单（报价登记）：字段全部来自 QUOTE_FIELDS / QUOTE_ITEM_COLUMNS ---- */
+function quoteFormFieldHTML(f) {
+  const id = "qf_" + f.key;
+  let inner;
+  if (f.type === "select") {
+    inner = '<select class="input" id="' + id + '">' + f.options.map(o =>
+      '<option value="' + o + '"' + (o === f.def ? " selected" : "") + ">" + o + "</option>").join("") + "</select>";
+  } else {
+    inner = '<input class="input" id="' + id + '" placeholder="' + (f.placeholder || "") + '">';
+  }
+  return '<div class="form-field' + (f.full ? " full" : "") + '"><label>' + f.label +
+    (f.required ? " *" : "") + "</label>" + inner + "</div>";
+}
+
+function quoteItemHeadHTML(extraHead) {
+  return QUOTE_ITEM_COLUMNS.map(c =>
+    "<th" + (c.width ? ' style="width:' + c.width + '"' : "") + ">" + c.label + "</th>"
+  ).join("") + (extraHead || "");
+}
+
+function openQuoteForm() {
+  const box = $("#modalBox");
+  box.innerHTML = "<h3>新建报价单</h3>" +
+    '<div class="form-grid">' + QUOTE_FIELDS.map(quoteFormFieldHTML).join("") + "</div>" +
+    '<div style="font-size:13px;font-weight:600;margin:20px 0 4px">报价明细 *</div>' +
+    '<div style="overflow-x:auto"><table class="items-table"><thead><tr>' +
+    quoteItemHeadHTML('<th style="width:96px">金额</th><th style="width:38px"></th>') +
+    '</tr></thead><tbody id="qfItems"></tbody></table></div>' +
+    '<button class="btn btn-ghost" style="margin-top:12px" onclick="addQuoteRow()">＋ 添加明细行</button>' +
+    '<div class="tax-summary">' +
+      '<div>小计（未税）<b class="tnum" id="qfSubtotal">¥0</b></div>' +
+      '<div>税额（<span id="qfTaxLabel">13%</span>）<b class="tnum" id="qfTax">¥0</b></div>' +
+      '<div class="grand">价税合计<b class="tnum" id="qfTotal">¥0</b></div>' +
+    "</div>" +
+    '<div class="modal-actions">' +
+    '<button class="btn btn-ghost" onclick="closeModal()">取消</button>' +
+    '<button class="btn btn-ghost" id="qfDraft">💾 保存草稿</button>' +
+    '<button class="btn btn-primary" id="qfSubmit">📤 提交审批</button></div>';
+  box.classList.add("wide");
+  $("#modalMask").classList.add("show");
+  addQuoteRow(); addQuoteRow();
+  $("#qfItems").addEventListener("input", recalcQuoteForm);
+  const taxSel = $("#qf_taxRate");
+  if (taxSel) taxSel.addEventListener("change", recalcQuoteForm);
+  $("#qfDraft").addEventListener("click", () => saveQuote(false));
+  $("#qfSubmit").addEventListener("click", () => saveQuote(true));
+  const first = $("#qf_customer");
+  if (first) first.focus();
+}
+
+function addQuoteRow() {
+  const tb = $("#qfItems");
+  if (!tb) return;
+  const tr = document.createElement("tr");
+  tr.innerHTML = QUOTE_ITEM_COLUMNS.map(c => {
+    const type = c.type === "number" ? ' type="number" min="0"' : "";
+    const val = c.def != null ? c.def : "";
+    return '<td><input placeholder="' + c.label + '" data-k="' + c.key + '"' + type +
+      ' value="' + val + '"' + (c.required ? ' data-req="1"' : "") + "></td>";
+  }).join("") +
+    '<td class="row-amt tnum" style="font-weight:600;white-space:nowrap">¥0</td>' +
+    '<td><button class="icon-btn row-del" style="width:30px;height:30px;font-size:13px" title="删除行">✕</button></td>';
+  tr.querySelector(".row-del").addEventListener("click", () => {
+    if (tb.rows.length <= 1) { toast("至少保留一行明细", "⚠️"); return; }
+    tr.remove(); recalcQuoteForm();
+  });
+  tb.appendChild(tr);
+}
+
+function recalcQuoteForm() {
+  const tb = $("#qfItems");
+  if (!tb) return;
+  let subtotal = 0;
+  Array.from(tb.rows).forEach(tr => {
+    const qty = Number(tr.querySelector('[data-k="qty"]').value) || 0;
+    const price = Number(tr.querySelector('[data-k="price"]').value) || 0;
+    const amt = qty * price;
+    tr.querySelector(".row-amt").textContent = fmtMoney(amt);
+    subtotal += amt;
+  });
+  const rateSel = $("#qf_taxRate");
+  const rate = rateSel ? (parseFloat(rateSel.value.replace("%", "")) / 100 || 0) : 0.13;
+  const tax = subtotal * rate;
+  const set = (id, txt) => { const el = $("#" + id); if (el) el.textContent = txt; };
+  set("qfSubtotal", fmtMoney(subtotal));
+  set("qfTaxLabel", rateSel ? rateSel.value : "13%");
+  set("qfTax", fmtMoney(tax));
+  set("qfTotal", fmtMoney(subtotal + tax));
+}
+
+function collectQuoteItems() {
+  const items = [];
+  Array.from($("#qfItems").rows).forEach(tr => {
+    const g = k => tr.querySelector('[data-k="' + k + '"]').value.trim();
+    const item = {};
+    QUOTE_ITEM_COLUMNS.forEach(c => {
+      item[c.key] = c.type === "number" ? (Number(g(c.key)) || 0) : g(c.key);
+    });
+    const reqCol = QUOTE_ITEM_COLUMNS.find(c => c.required);
+    if (reqCol && !item[reqCol.key]) return;
+    items.push(item);
+  });
+  return items;
+}
+
+function saveQuote(submit) {
+  const data = {};
+  QUOTE_FIELDS.forEach(f => {
+    const el = $("#qf_" + f.key);
+    data[f.key] = el ? el.value.trim() : (f.def || "");
+  });
+  for (const f of QUOTE_FIELDS) {
+    if (f.required && !data[f.key]) { toast("请填写" + f.label, "⚠️"); return; }
+  }
+  const items = collectQuoteItems();
+  if (!items.length) { toast("请至少填写一行报价明细", "⚠️"); return; }
+  const q = {
+    id: "Q2026" + (quoteSeq++),
+    customer: data.customer, project: data.project,
+    contact: data.contact || "—", phone: data.phone || "—",
+    salesperson: data.salesperson,
+    delivery: data.delivery, taxRate: data.taxRate || "13%",
+    remark: (data.remark ? data.remark + "；" : "") + (data.delivery ? "交期要求：" + data.delivery : ""),
+    status: submit ? "待审批" : "草稿",
+    created: nowHM(),
+    items: items, comments: []
+  };
+  DB.quotes.unshift(q);
+  if (submit) {
+    DB.approvals.unshift({
+      id: "a" + Date.now(), applicant: q.salesperson, dept: "销售部", type: "报价审批",
+      detail: q.project + " " + fmtMoney(quoteGrandTotal(q)), amount: fmtMoney(quoteGrandTotal(q)),
+      submitted: nowHM(), status: "待审批", reason: q.remark || "报价审批申请", quoteId: q.id
+    });
+  }
+  closeModal();
+  toast(submit ? "报价单 " + q.id + " 已提交审批" : "草稿 " + q.id + " 已保存", submit ? "📤" : "💾");
+  if (state.page !== "quotes") goPage("quotes"); else render();
+}
+
+/* 工作台待办：点击报价类待办直接打开报价详情 */
+function todoOpen(i) {
+  const t = state.todos[i];
+  if (t.quoteId) openQuoteDrawer(t.quoteId);
+  else toggleTodo(i);
+}
+function todoItemHTML(t, i) {
+  return '<div class="todo-item" onclick="todoOpen(' + i + ')">' +
+    '<span class="checkbox' + (t.done ? " done" : "") + '">' + (t.done ? "✓" : "") + "</span>" +
+    '<span class="todo-text' + (t.done ? " done" : "") + '">' + esc(t.text) + "</span>" +
+    '<span class="todo-due">' + esc(t.due) + "</span></div>";
+}
+/* ================= 页面：审批中心 ================= */
+const TYPE_COLOR = { "报价审批": "orange", "采购审批": "blue", "图纸审批": "purple", "请假": "gray", "报销": "green", "用章": "gray" };
+const STATUS_BADGE = { "待审批": "orange", "已通过": "green", "已驳回": "red" };
+
+function renderApprovals() {
+  const f = state.apprFilter;
+  const list = DB.approvals.filter(a => f === "全部" || a.status === f);
+  return '<div class="page-head"><div><h2>审批中心</h2><p>处理报价、请假、报销等各类审批申请</p></div></div>' +
+    '<div class="filter-bar"><span style="font-size:13px;color:var(--text-2)">状态筛选：</span>' +
+    '<div class="seg">' + ["全部", "待审批", "已通过", "已驳回"].map(s =>
+      '<button class="' + (f === s ? "active" : "") + '" onclick="setApprFilter(\'' + s + '\')">' + s + "</button>"
+    ).join("") + "</div></div>" +
+    '<div class="approval-list">' +
+    (list.length ? list.map(a =>
+      '<div class="card approval-item" onclick="openApprOrQuote(\'' + a.id + '\')">' +
+      '<div><div class="appr-title">' + avatarHTML(a.applicant, 30) + esc(a.applicant) + " 的" + esc(a.type) + "申请" +
+      ' <span class="badge ' + (TYPE_COLOR[a.type] || "gray") + '">' + esc(a.type) + "</span>" +
+      ' <span class="badge ' + STATUS_BADGE[a.status] + '">' + a.status + "</span></div>" +
+      '<div class="appr-desc">' + esc(a.dept) + " · " + esc(a.detail) + " · " + esc(a.reason.slice(0, 34)) + "…</div></div>" +
+      '<div class="appr-side"><div style="font-size:15px;font-weight:700;color:var(--accent)">' + esc(a.amount) + "</div>" +
+      '<div class="appr-time">提交于 ' + esc(a.submitted) + "</div></div>" +
+      "</div>"
+    ).join("") :
+      '<div class="card pad">' + emptyHTML("该状态下暂无审批单") + "</div>") +
+    "</div>";
+}
+
+function setApprFilter(s) { state.apprFilter = s; render(); }
+
+function openApprovalDrawer(id) {
+  const a = DB.approvals.find(x => x.id === id);
+  if (!a) return;
+  const isPending = a.status === "待审批";
+  const steps =
+    '<div class="step-timeline">' +
+    '<div class="step done"><span class="step-dot"></span><div class="step-title">' + esc(a.applicant) + " 提交申请</div>" +
+      '<div class="step-sub">' + esc(a.submitted) + "</div></div>" +
+    (isPending
+      ? '<div class="step current"><span class="step-dot"></span><div class="step-title">部门主管审批中</div><div class="step-sub">等待处理 · 当前节点</div></div>' +
+        '<div class="step"><span class="step-dot"></span><div class="step-title">归档</div><div class="step-sub">审批完成后自动归档</div></div>'
+      : (a.status === "已通过"
+        ? '<div class="step done"><span class="step-dot"></span><div class="step-title">审批通过</div><div class="step-sub">已通过 · ' + esc(a.submitted) + '</div></div>'
+        : '<div class="step reject"><span class="step-dot"></span><div class="step-title">已驳回</div><div class="step-sub">请申请人补充材料后重新提交</div></div>')) +
+    "</div>";
+  openDrawer(
+    '<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">' +
+      '<span class="badge ' + (TYPE_COLOR[a.type] || "gray") + '">' + esc(a.type) + "</span>" +
+      '<span class="badge ' + STATUS_BADGE[a.status] + '" id="apprStatusBadge">' + a.status + "</span></div>" +
+    '<h3 style="font-size:18px;font-weight:700;margin-bottom:16px">' + esc(a.applicant) + " 的" + esc(a.type) + "申请</h3>" +
+    '<div class="info-row"><span class="k">申请人</span><span class="v" style="display:flex;align-items:center;gap:8px">' +
+      avatarHTML(a.applicant, 26) + esc(a.applicant) + "</span></div>" +
+    '<div class="info-row"><span class="k">所属部门</span><span class="v">' + esc(a.dept) + "</span></div>" +
+    '<div class="info-row"><span class="k">申请类型</span><span class="v">' + esc(a.type) + "</span></div>" +
+    '<div class="info-row"><span class="k">金额 / 天数</span><span class="v" style="color:var(--accent);font-weight:700">' + esc(a.amount) + "</span></div>" +
+    '<div class="info-row"><span class="k">提交时间</span><span class="v">' + esc(a.submitted) + "</span></div>" +
+    '<div style="font-size:13px;font-weight:600;margin:18px 0 4px">申请事由</div>' +
+    '<div class="desc-box">' + esc(a.reason) + "</div>" +
+    '<div style="font-size:13px;font-weight:600;margin:14px 0 8px">审批流程</div>' + steps,
+    isPending
+      ? '<button class="btn btn-success" style="flex:1" onclick="decideApproval(\'' + a.id + "', '已通过')\">✓ 通过</button>" +
+        '<button class="btn btn-danger" style="flex:1" onclick="decideApproval(\'' + a.id + "', '已驳回')\">✕ 驳回</button>"
+      : ""
+  );
+}
+
+function decideApproval(id, decision) {
+  const a = DB.approvals.find(x => x.id === id);
+  if (!a || a.status !== "待审批") return;
+  a.status = decision;
+  closeDrawer();
+  toast(decision === "已通过" ? "已通过该审批申请" : "已驳回该审批申请", decision === "已通过" ? "✅" : "🚫");
+  render();
+}
+
+/* ================= 页面：通讯录 ================= */
+function deptTreeHTML(nodes, depth) {
+  depth = depth || 0;
+  return nodes.map(d => {
+    const hasKids = d.children && d.children.length > 0;
+    const open = state.collapsedDepts[d.id] !== false; // 默认展开
+    const selected = state.contactDept === d.name;
+    let html = '<div class="tree-node">' +
+      '<div class="tree-row' + (selected ? " selected" : "") + '" data-dept="' + esc(d.name) + '">' +
+      (hasKids
+        ? '<span class="tree-caret' + (open ? " open" : "") + '" data-toggle="' + d.id + '">▶</span>'
+        : '<span class="tree-caret"></span>') +
+      '<span>🏢</span><span>' + esc(d.name) + "</span>" +
+      '<span class="tree-count">' + memberCount(d.name) + "</span></div>";
+    if (hasKids && open) {
+      html += '<div class="tree-children">' + deptTreeHTML(d.children, depth + 1) + "</div>";
+    }
+    return html + "</div>";
+  }).join("");
+}
+
+/* 部门路径匹配：成员 dept 如 "钣金车间 · 激光下料组"，任一段命中即算归属 */
+function deptMatch(mDept, deptName) {
+  return String(mDept).split(" · ").indexOf(deptName) >= 0;
+}
+function memberCount(deptName) {
+  return DB.members.filter(m => deptMatch(m.dept, deptName)).length;
+}
+
+function renderContacts() {
+  const q = state.contactQuery.trim().toLowerCase();
+  const dept = state.contactDept;
+  const list = DB.members.filter(m => {
+    const okDept = dept === "全部" || deptMatch(m.dept, dept);
+    const okQ = !q || m.name.toLowerCase().indexOf(q) >= 0 ||
+      m.title.toLowerCase().indexOf(q) >= 0 || m.phone.indexOf(q) >= 0;
+    return okDept && okQ;
+  });
+  return '<div class="page-head"><div><h2>通讯录</h2><p>组织架构与全体成员联系方式</p></div></div>' +
+    '<div class="toolbar"><div class="search-box" style="width:280px">' +
+    '<span class="s-icon">🔍</span><input id="contactSearch" placeholder="搜索姓名、职位、电话…" value="' +
+    esc(state.contactQuery) + '"></div>' +
+    '<span style="font-size:12.5px;color:var(--text-3)">共 ' + list.length + " 位成员</span></div>" +
+    '<div class="contact-layout">' +
+    '<div class="card tree"><div class="tree-node"><div class="tree-row' +
+    (dept === "全部" ? " selected" : "") + '" data-dept="全部">' +
+    '<span class="tree-caret"></span><span>🏛️</span><span>全部部门</span>' +
+    '<span class="tree-count">' + DB.members.length + "</span></div></div>" +
+    deptTreeHTML(DB.depts) + "</div>" +
+    '<div class="member-list">' +
+    (list.length ? list.map(m =>
+      '<div class="card member-card">' + avatarHTML(m.name, 48) +
+      '<div class="member-info"><div class="member-name">' + esc(m.name) + "</div>" +
+      '<div class="member-title">' + esc(m.title) + " · " + esc(m.dept) + "</div>" +
+      '<div class="member-contact">📞 ' + esc(m.phone) + "<br>✉️ " + esc(m.email) + "</div></div>" +
+      '<button class="icon-btn" title="发起聊天" onclick="toast(\'已向 ' + esc(m.name) + ' 发起聊天（演示）\', \'💬\')">💬</button></div>'
+    ).join("") :
+      '<div class="card pad" style="grid-column:1/-1">' + emptyHTML("没有找到匹配的成员，换个关键词试试") + "</div>") +
+    "</div></div>";
+}
+
+function bindContacts() {
+  const input = $("#contactSearch");
+  if (input) input.addEventListener("input", e => { state.contactQuery = e.target.value; refreshContactsList(); });
+  $$(".tree-caret[data-toggle]").forEach(c => {
+    c.addEventListener("click", e => {
+      e.stopPropagation();
+      const id = c.dataset.toggle;
+      state.collapsedDepts[id] = state.collapsedDepts[id] === false ? true : false;
+      render();
+    });
+  });
+  $$(".tree-row[data-dept]").forEach(r => {
+    r.addEventListener("click", e => {
+      if (e.target.closest(".tree-caret[data-toggle]")) return;
+      state.contactDept = r.dataset.dept;
+      render();
+    });
+  });
+}
+
+/* 通讯录搜索时只刷新列表，避免输入框失焦 */
+function refreshContactsList() {
+  const q = state.contactQuery.trim().toLowerCase();
+  const dept = state.contactDept;
+  const list = DB.members.filter(m => {
+    const okDept = dept === "全部" || deptMatch(m.dept, dept);
+    const okQ = !q || m.name.toLowerCase().indexOf(q) >= 0 ||
+      m.title.toLowerCase().indexOf(q) >= 0 || m.phone.indexOf(q) >= 0;
+    return okDept && okQ;
+  });
+  const box = $(".member-list");
+  if (!box) return;
+  box.innerHTML = list.length ? list.map(m =>
+    '<div class="card member-card">' + avatarHTML(m.name, 48) +
+    '<div class="member-info"><div class="member-name">' + esc(m.name) + "</div>" +
+    '<div class="member-title">' + esc(m.title) + " · " + esc(m.dept) + "</div>" +
+    '<div class="member-contact">📞 ' + esc(m.phone) + "<br>✉️ " + esc(m.email) + "</div></div>" +
+    '<button class="icon-btn" title="发起聊天" onclick="toast(\'已向 ' + esc(m.name) + ' 发起聊天（演示）\', \'💬\')">💬</button></div>'
+  ).join("") :
+    '<div class="card pad" style="grid-column:1/-1">' + emptyHTML("没有找到匹配的成员，换个关键词试试") + "</div>";
+}
+
+/* ================= 页面：文档中心 ================= */
+const FILE_TYPE_META = {
+  word:   { icon: "📘", bg: "var(--blue-soft)" },
+  excel:  { icon: "📗", bg: "var(--green-soft)" },
+  pdf:    { icon: "📕", bg: "var(--red-soft)" },
+  design: { icon: "🎨", bg: "var(--purple-soft)" },
+  other:  { icon: "📄", bg: "var(--input-bg)" }
+};
+
+function renderDocs() {
+  const folder = DB.folders.find(f => f.id === state.docFolder) || DB.folders[0];
+  const files = DB.files.filter(f => f.folder === folder.id);
+  return '<div class="page-head"><div><h2>文档中心</h2><p>团队共享文件统一管理</p></div>' +
+    '<div style="display:flex;gap:10px">' +
+    '<button class="btn btn-ghost" onclick="newFolder()">📁 新建文件夹</button>' +
+    '<button class="btn btn-primary" onclick="mockUpload()">⬆️ 上传文件</button></div></div>' +
+    '<div class="breadcrumb">📁 文档中心 <span>›</span> <b>' + esc(folder.name) + "</b></div>" +
+    '<div style="height:10px"></div>' +
+    '<div class="doc-layout">' +
+    '<div class="card folder-list">' + DB.folders.map(f => {
+      const n = DB.files.filter(x => x.folder === f.id).length;
+      return '<button class="folder-item' + (f.id === folder.id ? " active" : "") +
+        '" onclick="switchFolder(\'' + f.id + '\')"><span class="f-icon">📁</span>' +
+        esc(f.name) + '<span class="f-count">' + n + "</span></button>";
+    }).join("") + "</div>" +
+    '<div class="card pad" style="overflow-x:auto"><table class="file-table"><thead><tr>' +
+    "<th>文件名称</th><th>大小</th><th>更新时间</th><th>更新人</th><th>操作</th></tr></thead><tbody>" +
+    (files.length ? files.map(f => {
+      const meta = FILE_TYPE_META[f.type] || FILE_TYPE_META.other;
+      return "<tr><td><div class=\"file-name\"><span class=\"file-icon\" style=\"background:" + meta.bg + "\">" +
+        meta.icon + "</span>" + esc(f.name) + "</div></td>" +
+        "<td>" + esc(f.size) + "</td><td>" + esc(f.updated) + "</td>" +
+        "<td>" + esc(f.updater) + "</td>" +
+        '<td><button class="icon-btn" style="width:32px;height:32px;font-size:15px" title="下载" onclick="toast(\'开始下载：' +
+        esc(f.name) + '\', \'⬇️\')">⬇️</button></td></tr>';
+    }).join("") :
+      '<tr><td colspan="5">' + emptyHTML("该文件夹暂无文件，点击右上角上传") + "</td></tr>") +
+    "</tbody></table></div></div>";
+}
+
+function switchFolder(id) { state.docFolder = id; render(); }
+
+function newFolder() {
+  openModal("新建文件夹",
+    '<input class="input" id="newFolderName" style="width:100%" placeholder="请输入文件夹名称" maxlength="20">',
+    () => {
+      const name = $("#newFolderName").value.trim();
+      if (!name) { toast("文件夹名称不能为空", "⚠️"); return; }
+      DB.folders.push({ id: "f" + Date.now(), name: name });
+      closeModal();
+      toast("文件夹「" + name + "」创建成功", "📁");
+      render();
+    }, "创建");
+}
+
+function mockUpload() {
+  const folder = DB.folders.find(f => f.id === state.docFolder) || DB.folders[0];
+  const names = ["生产例会纪要_1021.docx", "10月报价汇总表.xlsx", "出厂试验记录_1021.pdf"];
+  const name = names[Math.floor(Math.random() * names.length)];
+  DB.files.unshift({
+    id: "doc" + Date.now(), folder: folder.id, name: name,
+    type: name.endsWith(".xlsx") ? "excel" : (name.endsWith(".pdf") ? "pdf" : "word"),
+    size: (Math.random() * 4 + 0.3).toFixed(1) + " MB",
+    updated: "10-21 " + new Date().getHours() + ":" + String(new Date().getMinutes()).padStart(2, "0"),
+    updater: CURRENT_USER
+  });
+  toast("文件「" + name + "」上传成功", "⬆️");
+  render();
+}
+
+/* ================= 页面：应用中心 ================= */
+/* 平台化入口：已接入应用卡片 + 即将上线应用 */
+const UPCOMING_APPS = [
+  { code: "pricelib",   name: "价格库",     icon: "🏷️", desc: "钣金与电气物料价格统一维护，报价一键取价" },
+  { code: "drawing",    name: "图纸快速分解", icon: "📐", desc: "CAD 图纸一键拆解，自动生成下料清单" },
+  { code: "quickquote", name: "快速报价",   icon: "⚡", desc: "基于价格库与图纸分解的秒级报价" }
+];
+
+function renderAppStore() {
+  const online = APPS.filter(a => a.code !== "appstore");
+  return '<div class="page-head"><div><h2>应用中心</h2><p>平台已接入应用与即将上线的新应用</p></div></div>' +
+    '<div style="font-size:14px;font-weight:700;margin:2px 0 14px">已接入 · ' + (online.length + 1) + "</div>" +
+    '<div class="app-grid">' + online.map(a =>
+      '<div class="card app-card" onclick="goPage(\'' + a.code + '\')">' +
+      '<div class="app-icon" style="background:var(--accent-soft)">' + a.icon + "</div>" +
+      '<div class="app-name">' + esc(a.name) + '</div><div class="app-desc">' + esc(a.desc) + "</div>" +
+      '<div class="app-go">进入应用 →</div></div>'
+    ).join("") + showroomCardHTML() + "</div>" +
+    '<div style="font-size:14px;font-weight:700;margin:28px 0 14px">即将上线</div>' +
+    '<div class="app-grid">' + UPCOMING_APPS.map(a =>
+      '<div class="card app-card coming" onclick="toast(\'「' + esc(a.name) + '」按应用接入规范开发中，敬请期待\', \'🧩\')">' +
+      '<div class="app-icon" style="background:var(--input-bg)">' + a.icon + "</div>" +
+      '<div class="app-name">' + esc(a.name) + ' <span class="badge orange">即将上线</span></div>' +
+      '<div class="app-desc">' + esc(a.desc) + '</div>' +
+      '<div class="app-note">按应用接入规范开发中</div></div>'
+    ).join("") + "</div>" +
+    '<div class="card pad" style="margin-top:24px">' +
+    '<div class="panel-head"><h3>🧩 应用接入规范</h3></div>' +
+    '<div style="font-size:13px;color:var(--text-2);line-height:1.9">' +
+    "新应用接入只需三步：① 在 <b>APPS</b> 注册表中追加 {code, name, icon, group, desc}；" +
+    "② 在 <b>PAGE_RENDERERS</b> 中按 code 注册页面渲染函数；" +
+    "③ 如需独立数据，在 <b>DB</b> 下新增命名空间。侧边菜单、顶栏标题、应用中心卡片将自动生成，无需改动平台壳代码。</div></div>";
+}
+
+/* ================= 顶栏交互 ================= */
+function renderNotifs() {
+  $("#notifList").innerHTML = DB.notifications.map(n =>
+    '<div class="notif-item' + (n.unread ? " unread" : "") + '" onclick="openNotif(\'' + n.id + '\')">' +
+    '<div class="n-icon" style="background:' + n.bg + '">' + n.icon + "</div>" +
+    '<div><div class="n-title">' + esc(n.title) + '</div><div class="n-desc">' + esc(n.desc) +
+    '</div><div class="n-time">' + esc(n.time) + "</div></div></div>"
+  ).join("");
+  updateNotifDot();
+}
+function updateNotifDot() {
+  const n = DB.notifications.filter(x => x.unread).length;
+  const dot = $("#notifDot");
+  dot.style.display = n ? "flex" : "none";
+  dot.textContent = n;
+}
+function openNotif(id) {
+  const n = DB.notifications.find(x => x.id === id);
+  if (n) n.unread = false;
+  renderNotifs();
+  if (n && n.quote) { openQuoteDrawer(n.quote); return; }
+  toast("已查看通知：" + (n ? n.title : ""), "🔔");
+}
+function markAllRead() {
+  DB.notifications.forEach(n => n.unread = false);
+  renderNotifs();
+  toast("已将全部通知标为已读", "✅");
+}
+
+function globalSearch(kw) {
+  kw = kw.trim().toLowerCase();
+  const box = $("#searchResults");
+  if (!kw) { box.classList.remove("show"); box.innerHTML = ""; return; }
+  const results = [];
+  DB.quotes.forEach(q => { const s = q.id + " " + q.customer + " " + q.project; if (s.toLowerCase().indexOf(kw) >= 0) results.push({ tag: "报价", text: q.id + " · " + q.project, go: "quotes", open: "quote:" + q.id }); });
+  DB.approvals.forEach(a => { const s = a.applicant + "的" + a.type + "申请"; if (s.toLowerCase().indexOf(kw) >= 0) results.push({ tag: "审批", text: s, go: "approvals", open: "appr:" + a.id }); });
+  DB.members.forEach(m => { if ((m.name + m.title).toLowerCase().indexOf(kw) >= 0) results.push({ tag: "联系人", text: m.name + " · " + m.title, go: "contacts" }); });
+  DB.files.forEach(f => { if (f.name.toLowerCase().indexOf(kw) >= 0) results.push({ tag: "文档", text: f.name, go: "docs" }); });
+  if (!results.length) {
+    box.innerHTML = '<div style="padding:8px 0">' + emptyHTML("没有找到相关结果") + "</div>";
+  } else {
+    box.innerHTML = results.slice(0, 8).map((r, i) =>
+      '<div class="search-result-item" data-idx="' + i + '"><span class="tag">' + r.tag + "</span><span>" +
+      esc(r.text) + "</span></div>"
+    ).join("");
+    box._results = results;
+    $$(".search-result-item", box).forEach(el => {
+      el.addEventListener("click", () => {
+        const r = box._results[+el.dataset.idx];
+        box.classList.remove("show");
+        $("#globalSearch").value = "";
+        goPage(r.go);
+        setTimeout(() => {
+          if (r.open && r.open.indexOf("quote:") === 0) openQuoteDrawer(r.open.slice(6));
+          if (r.open && r.open.indexOf("appr:") === 0) openApprOrQuote(r.open.slice(5));
+        }, 80);
+      });
+    });
+  }
+  box.classList.add("show");
+}
+
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem("collab-theme", theme); } catch (e) {}
+  $("#themeToggle").textContent = theme === "dark" ? "☀️" : "🌙";
+  refresh3DTheme(); // 3D 场景配色跟随主题
+}
+
+/* ================= 导航与渲染 ================= */
+const PAGE_RENDERERS = {
+  dashboard: renderDashboard,
+  quotes: renderQuotes,
+  approvals: renderApprovals,
+  contacts: renderContacts,
+  docs: renderDocs,
+  appstore: renderAppStore
+};
+
+function goPage(page) {
+  state.page = page;
+  $$("#nav .nav-item").forEach(b => b.classList.toggle("active", b.dataset.page === page));
+  $("#topbarTitle").textContent = PAGE_TITLES[page] || "";
+  render();
+  closeDrawer();
+}
+
+function render() {
+  disposeTrend3D(); // 切页前释放 3D 趋势图资源
+  const html = (PAGE_RENDERERS[state.page] || renderDashboard)();
+  $("#page").innerHTML = html;
+  if (state.page === "quotes") bindQuotes();
+  if (state.page === "contacts") bindContacts();
+  if (state.page === "dashboard") initTrend3D();
+  if (state.page === "appstore") bindAppTilt();
+}
+
+/* ================= 侧边栏：折叠与拖拽宽度（记忆到 localStorage） ================= */
+function loadSidePrefs() {
+  try {
+    const w = parseInt(localStorage.getItem("collab-side-w") || "", 10);
+    if (w >= 160 && w <= 300) document.documentElement.style.setProperty("--sidebar-w", w + "px");
+    if (localStorage.getItem("collab-side-collapsed") === "1")
+      document.body.classList.add("side-collapsed");
+  } catch (e) {}
+  $("#sideCollapse").textContent = document.body.classList.contains("side-collapsed") ? "›" : "‹";
+}
+
+function setSideCollapsed(collapsed) {
+  document.body.classList.toggle("side-collapsed", collapsed);
+  $("#sideCollapse").textContent = collapsed ? "›" : "‹";
+  try { localStorage.setItem("collab-side-collapsed", collapsed ? "1" : "0"); } catch (e) {}
+}
+
+function bindSideResizer() {
+  const bar = $("#sideResizer");
+  if (!bar) return;
+  bar.addEventListener("pointerdown", e => {
+    if (document.body.classList.contains("side-collapsed")) return;
+    e.preventDefault();
+    const w0 = parseFloat(getComputedStyle($("#sidebar")).width);
+    const x0 = e.clientX;
+    document.body.classList.add("resizing");
+    const onMove = ev => {
+      const w = Math.max(160, Math.min(300, Math.round(w0 + ev.clientX - x0)));
+      document.documentElement.style.setProperty("--sidebar-w", w + "px");
+    };
+    const onUp = () => {
+      document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerup", onUp);
+      document.body.classList.remove("resizing");
+      try {
+        const w = Math.round(parseFloat(getComputedStyle($("#sidebar")).width));
+        localStorage.setItem("collab-side-w", String(w));
+      } catch (err) {}
+    };
+    document.addEventListener("pointermove", onMove);
+    document.addEventListener("pointerup", onUp);
+  });
+}
+
+/* ================= 初始化 ================= */
+function init() {
+  // 主题
+  let theme = "light";
+  try { theme = localStorage.getItem("collab-theme") || "light"; } catch (e) {}
+  setTheme(theme);
+  $("#themeToggle").addEventListener("click", () =>
+    setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+  // 头像
+  $("#sideAvatar").innerHTML = avatarHTML(CURRENT_USER, 38);
+  $("#topAvatar").innerHTML = avatarHTML(CURRENT_USER, 34);
+
+  // 导航（由应用注册表 APPS 渲染）
+  renderNav();
+
+  // 侧边栏：折叠按钮 + 拖拽调宽（宽度与折叠状态写入 localStorage）
+  loadSidePrefs();
+  $("#sideCollapse").addEventListener("click", () =>
+    setSideCollapsed(!document.body.classList.contains("side-collapsed")));
+  bindSideResizer();
+
+  // 通知
+  renderNotifs();
+  $("#bellBtn").addEventListener("click", e => {
+    e.stopPropagation();
+    $("#notifDropdown").classList.toggle("show");
+    $("#userDropdown").classList.remove("show");
+  });
+  $("#markRead").addEventListener("click", e => { e.stopPropagation(); markAllRead(); });
+
+  // 用户菜单
+  $("#userBtn").addEventListener("click", e => {
+    e.stopPropagation();
+    $("#userDropdown").classList.toggle("show");
+    $("#notifDropdown").classList.remove("show");
+  });
+  $$("#userDropdown .menu-item").forEach(item => {
+    item.addEventListener("click", () => {
+      $("#userDropdown").classList.remove("show");
+      const act = item.dataset.act;
+      if (act === "logout") toast("已退出登录（演示）", "👋");
+      else if (act === "profile") toast("个人资料（演示）", "👤");
+      else toast("偏好设置（演示）", "⚙️");
+    });
+  });
+
+  // 点击空白处关闭下拉
+  document.addEventListener("click", e => {
+    if (!e.target.closest("#notifDropdown") && !e.target.closest("#bellBtn"))
+      $("#notifDropdown").classList.remove("show");
+    if (!e.target.closest("#userDropdown") && !e.target.closest("#userBtn"))
+      $("#userDropdown").classList.remove("show");
+    if (!e.target.closest(".search-wrap")) $("#searchResults").classList.remove("show");
+  });
+
+  // 全局搜索
+  $("#globalSearch").addEventListener("input", e => globalSearch(e.target.value));
+  $("#globalSearch").addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      const first = $(".search-result-item");
+      if (first) first.click();
+    }
+  });
+
+  // 抽屉 / 弹窗
+  $("#drawerMask").addEventListener("click", closeDrawer);
+  $("#modalMask").addEventListener("click", e => { if (e.target === $("#modalMask")) closeModal(); });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") { closeDrawer(); closeModal(); closeShowroom(); }
+  });
+
+  goPage("dashboard");
+}
+
+/* ================================================================
+   3D 模块：工作台趋势柱状图 / 应用卡片 3D 倾斜 / 3D 柜体展厅
+   ================================================================ */
+
+/* ---------- 1) 工作台：近7天报价金额 3D 柱状图 ---------- */
+let trend3d = null;
+
+function disposeTrend3D() {
+  if (!trend3d) return;
+  try {
+    cancelAnimationFrame(trend3d.raf);
+    trend3d.scene.traverse(function (o) {
+      if (o.geometry) o.geometry.dispose();
+      if (o.material) {
+        var ms = Array.isArray(o.material) ? o.material : [o.material];
+        ms.forEach(function (m) { if (m.map) m.map.dispose(); m.dispose(); });
+      }
+    });
+    trend3d.renderer.dispose();
+    var cv = trend3d.renderer.domElement;
+    if (cv.parentNode) cv.parentNode.removeChild(cv);
+  } catch (e) {}
+  trend3d = null;
+}
+
+function barGradientTexture() {
+  var c = document.createElement("canvas");
+  c.width = 16; c.height = 128;
+  var g = c.getContext("2d");
+  var gr = g.createLinearGradient(0, 0, 0, 128);
+  gr.addColorStop(0.0, "#6ab8ff");
+  gr.addColorStop(0.55, "#0a84ff");
+  gr.addColorStop(1.0, "#005fc4");
+  g.fillStyle = gr; g.fillRect(0, 0, 16, 128);
+  return new THREE.CanvasTexture(c);
+}
+
+function textSprite(text, color, scale) {
+  var c = document.createElement("canvas");
+  c.width = 160; c.height = 80;
+  var g = c.getContext("2d");
+  g.font = "700 34px -apple-system, 'SF Pro Text', 'PingFang SC', 'Microsoft YaHei', sans-serif";
+  g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillStyle = color;
+  g.fillText(text, 80, 42);
+  var tex = new THREE.CanvasTexture(c);
+  tex.minFilter = THREE.LinearFilter;
+  var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+  sp.scale.set(scale || 0.95, (scale || 0.95) / 2, 1);
+  sp.userData.text = text;
+  return sp;
+}
+
+function refreshSpriteColor(sp, color) {
+  if (!sp) return;
+  var nt = textSprite(sp.userData.text, color, sp.scale.x);
+  sp.material.map.dispose();
+  sp.material.map = nt.material.map;
+  sp.material.needsUpdate = true;
+  nt.material.dispose();
+}
+
+function initTrend3D() {
+  var wrap = $("#trend3d");
+  if (!wrap || !webglOK()) return;
+  disposeTrend3D();
+  var W = wrap.clientWidth || 640, H = 300;
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+  } catch (e) {
+    wrap.innerHTML = weeklyChartSVG(); // 兜底：回退 SVG 折线图
+    return;
+  }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(W, H);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  wrap.insertBefore(renderer.domElement, wrap.firstChild);
+
+  var pal = theme3D();
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(pal.bg);
+  scene.fog = new THREE.Fog(pal.bg, 11, 19);
+
+  var camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+  camera.position.set(0, 3.9, 7.6);
+  camera.lookAt(0, 1.0, 0);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, pal.ground, 0.8));
+  var key = new THREE.DirectionalLight(0xffffff, 0.9);
+  key.position.set(4.5, 7, 4);
+  key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024);
+  key.shadow.camera.left = -6; key.shadow.camera.right = 6;
+  key.shadow.camera.top = 7; key.shadow.camera.bottom = -3;
+  key.shadow.camera.far = 25;
+  scene.add(key);
+  var fill = new THREE.DirectionalLight(0xcfe4ff, 0.28);
+  fill.position.set(-5, 3, -4);
+  scene.add(fill);
+
+  var ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(34, 34),
+    new THREE.ShadowMaterial({ opacity: pal.shadow })
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+  var grid = new THREE.GridHelper(10, 10, pal.grid, pal.grid);
+  grid.position.y = 0.012;
+  grid.material.transparent = true;
+  grid.material.opacity = 0.55;
+  scene.add(grid);
+
+  var group = new THREE.Group();
+  scene.add(group);
+  var barTex = barGradientTexture();
+  var bars = [];
+  var maxV = 80, maxH = 2.75;
+  TREND_DATA.forEach(function (v, i) {
+    var geo = new THREE.BoxGeometry(0.58, 1, 0.58);
+    geo.translate(0, 0.5, 0);
+    var mat = new THREE.MeshStandardMaterial({ map: barTex, roughness: 0.3, metalness: 0.15 });
+    var bar = new THREE.Mesh(geo, mat);
+    var targetH = Math.max(0.08, (v / maxV) * maxH);
+    bar.scale.y = 0.001;
+    bar.position.set((i - 3) * 1.04, 0, 0);
+    bar.castShadow = true;
+    bar.userData = { value: v, targetH: targetH, delay: i * 0.09 };
+    group.add(bar);
+    bars.push(bar);
+    var vs = textSprite(String(v), pal.label, 0.85);
+    vs.position.set(bar.position.x, 0.34, 0);
+    vs.material.opacity = 0;
+    group.add(vs);
+    bar.userData.vsprite = vs;
+    var ds = textSprite(TREND_LABELS[i], pal.label, 0.62);
+    ds.position.set(bar.position.x, 0.2, 1.18);
+    group.add(ds);
+    bar.userData.dsprite = ds;
+  });
+
+  var raycaster = new THREE.Raycaster();
+  var pointer = new THREE.Vector2();
+  var tip = $("#trendTip");
+  var hovered = null;
+  var dragging = false, lastX = 0, lastY = 0, lastInteract = 0;
+
+  function clearHover() {
+    if (hovered) {
+      hovered.material.emissive.setHex(0x000000);
+      hovered.scale.x = hovered.scale.z = 1;
+      hovered = null;
+    }
+    if (tip) tip.style.display = "none";
+    renderer.domElement.style.cursor = "grab";
+  }
+  function castAt(cx, cy) {
+    var r = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((cx - r.left) / r.width) * 2 - 1;
+    pointer.y = -((cy - r.top) / r.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    var hits = raycaster.intersectObjects(bars);
+    return hits.length ? hits[0].object : null;
+  }
+
+  var cv = renderer.domElement;
+  cv.addEventListener("pointerdown", function (e) {
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+    lastInteract = performance.now();
+    if (cv.setPointerCapture) { try { cv.setPointerCapture(e.pointerId); } catch (err) {} }
+    cv.style.cursor = "grabbing";
+  });
+  cv.addEventListener("pointermove", function (e) {
+    var r = wrap.getBoundingClientRect();
+    if (dragging) {
+      var dx = e.clientX - lastX, dy = e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY;
+      group.rotation.y += dx * 0.006;
+      group.rotation.x = Math.max(-0.12, Math.min(0.4, group.rotation.x + dy * 0.003));
+      lastInteract = performance.now();
+      return;
+    }
+    var bar = castAt(e.clientX, e.clientY);
+    if (bar !== hovered) {
+      clearHover();
+      if (bar) {
+        hovered = bar;
+        bar.material.emissive.setHex(0x0a58c4);
+        bar.material.emissiveIntensity = 0.45;
+        bar.scale.x = bar.scale.z = 1.14;
+        var idx = bars.indexOf(bar);
+        tip.innerHTML = TREND_LABELS[idx] + "<br><b>" + TREND_DATA[idx] + " 万元</b>";
+        tip.style.display = "block";
+        cv.style.cursor = "pointer";
+      }
+    }
+    if (hovered) {
+      tip.style.left = (e.clientX - r.left) + "px";
+      tip.style.top = (e.clientY - r.top) + "px";
+    }
+  });
+  function endDrag() {
+    dragging = false;
+    lastInteract = performance.now();
+    cv.style.cursor = hovered ? "pointer" : "grab";
+  }
+  cv.addEventListener("pointerup", endDrag);
+  cv.addEventListener("pointercancel", endDrag);
+  cv.addEventListener("pointerleave", function () { dragging = false; clearHover(); });
+
+  var clock = new THREE.Clock();
+  var elapsed = 0;
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  trend3d = {
+    renderer: renderer, scene: scene, camera: camera, wrap: wrap,
+    group: group, grid: grid, ground: ground, bars: bars,
+    paused: false, hidden: false, raf: 0
+  };
+
+  (function loop() {
+    if (!trend3d) return;
+    trend3d.raf = requestAnimationFrame(loop);
+    if (trend3d.paused || trend3d.hidden || document.hidden) return;
+    var dt = Math.min(clock.getDelta(), 0.05);
+    elapsed += dt;
+    bars.forEach(function (bar) {
+      var t = (elapsed - bar.userData.delay) / 0.75;
+      var k = easeOutCubic(Math.max(0, Math.min(1, t)));
+      bar.scale.y = Math.max(0.001, bar.userData.targetH * k);
+      if (bar.userData.vsprite) {
+        bar.userData.vsprite.material.opacity = k;
+        bar.userData.vsprite.position.y = bar.scale.y + 0.34;
+      }
+    });
+    if (!dragging && performance.now() - lastInteract > 2500) {
+      group.rotation.y += dt * 0.22; // 缓慢自动旋转
+    }
+    renderer.render(scene, camera);
+  })();
+}
+
+function sizeTrend3D() {
+  if (!trend3d) return;
+  var w = trend3d.wrap.clientWidth || 640, h = 300;
+  trend3d.camera.aspect = w / h;
+  trend3d.camera.updateProjectionMatrix();
+  trend3d.renderer.setSize(w, h);
+}
+
+function applyTrend3DTheme() {
+  if (!trend3d) return;
+  var pal = theme3D();
+  trend3d.scene.background.setHex(pal.bg);
+  trend3d.scene.fog.color.setHex(pal.bg);
+  trend3d.grid.material.color.setHex(pal.grid);
+  trend3d.ground.material.opacity = pal.shadow;
+  trend3d.bars.forEach(function (bar) {
+    refreshSpriteColor(bar.userData.vsprite, pal.label);
+    refreshSpriteColor(bar.userData.dsprite, pal.label);
+  });
+}
+
+/* ---------- 2) 应用中心：卡片 3D 倾斜（纯 CSS/JS） ---------- */
+function tiltMove(e) {
+  var el = e.currentTarget;
+  var r = el.getBoundingClientRect();
+  var px = (e.clientX - r.left) / r.width - 0.5;
+  var py = (e.clientY - r.top) / r.height - 0.5;
+  el.style.transition = "transform .1s ease-out";
+  el.style.transform = "perspective(950px) rotateX(" + (-py * 16).toFixed(2) +
+    "deg) rotateY(" + (px * 16).toFixed(2) + "deg) translateY(-4px)";
+  el.style.setProperty("--mx", ((px + 0.5) * 100).toFixed(1) + "%");
+  el.style.setProperty("--my", ((py + 0.5) * 100).toFixed(1) + "%");
+}
+function tiltLeave(e) {
+  var el = e.currentTarget;
+  el.style.transition = "transform .6s cubic-bezier(.18,.9,.26,1.28)"; // 弹性回正
+  el.style.transform = "";
+}
+function bindAppTilt() {
+  $$(".app-card").forEach(function (card) {
+    if (card._tiltBound) return;
+    card._tiltBound = true;
+    card.classList.add("tilt3d");
+    card.addEventListener("pointermove", tiltMove);
+    card.addEventListener("pointerleave", tiltLeave);
+  });
+}
+
+/* ---------- 3) 3D 柜体展厅：GCS 低压开关柜 ---------- */
+let showroom = null;
+
+function showroomCardHTML() {
+  return '<div class="card app-card" onclick="openShowroom()">' +
+    '<div class="app-icon" style="background:var(--purple-soft)">🗄️</div>' +
+    '<div class="app-name">3D 柜体展厅 <span class="badge purple">Beta</span></div>' +
+    '<div class="app-desc">GCS 开关柜交互式 3D 展示，可开门查看内部结构</div>' +
+    '<div class="app-go">进入应用 →</div></div>';
+}
+
+function openShowroom() {
+  if (!webglOK()) { toast("当前环境不支持 3D", "🧊"); return; }
+  if (showroom && showroom.open) return;
+  if (trend3d) trend3d.paused = true; // 展厅打开时暂停工作台 3D
+
+  var ov = document.createElement("div");
+  ov.className = "showroom";
+  ov.id = "showroom";
+  ov.innerHTML =
+    '<div class="sr-head"><div>' +
+    '<div class="sr-title">🗄️ 3D 柜体展厅 <span class="badge purple">Beta</span></div>' +
+    '<div class="sr-sub">GCS 低压抽出式开关柜 · 拖拽旋转 / 滚轮缩放 / 右键平移</div></div>' +
+    '<button class="sr-close" id="srClose" title="关闭">✕</button></div>' +
+    '<div class="sr-stage" id="srStage"><div class="sr-toolbar">' +
+    '<button class="sr-btn" data-view="front">正视</button>' +
+    '<button class="sr-btn" data-view="side">侧视</button>' +
+    '<button class="sr-btn" data-view="top">俯视</button>' +
+    '<button class="sr-btn" data-view="reset">复位</button>' +
+    '<button class="sr-btn door" id="srDoor">🚪 开门</button>' +
+    '</div><div class="sr-loading" id="srLoading">正在加载 3D 场景…</div></div>' +
+    '<div class="sr-infobar">' +
+    '<span><b>GCS 型</b> 低压抽出式开关柜</span><span class="dot-sep">·</span>' +
+    '<span>宽 <b>1000</b> × 深 <b>800</b> × 高 <b>2200</b> mm</span><span class="dot-sep">·</span>' +
+    '<span>防护等级 <b>IP4X</b></span><span class="dot-sep">·</span>' +
+    '<span>额定电流 <b>4000A</b></span><span class="dot-sep">·</span>' +
+    '<span style="color:var(--text-3)">演示数据</span></div>';
+  document.body.appendChild(ov);
+
+  $("#srClose").addEventListener("click", closeShowroom);
+  $$("#showroom .sr-btn[data-view]").forEach(function (b) {
+    b.addEventListener("click", function () { flyToView(b.dataset.view); });
+  });
+  $("#srDoor").addEventListener("click", toggleShowroomDoor);
+
+  var stage = $("#srStage");
+  var W = stage.clientWidth || 900, H = stage.clientHeight || 520;
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+  } catch (e) {
+    ov.parentNode.removeChild(ov);
+    if (trend3d) trend3d.paused = false;
+    toast("当前环境不支持 3D", "🧊");
+    return;
+  }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(W, H);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  stage.appendChild(renderer.domElement);
+  var loading = $("#srLoading");
+  if (loading) loading.style.display = "none";
+
+  var pal = theme3D();
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(pal.bg);
+  scene.fog = new THREE.Fog(pal.bg, 12, 26);
+
+  var camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+  var CAM_HOME = { pos: new THREE.Vector3(2.9, 2.1, 3.6), tgt: new THREE.Vector3(0, 1.02, 0) };
+  camera.position.copy(CAM_HOME.pos);
+
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.target.copy(CAM_HOME.tgt);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.06;
+  controls.minDistance = 1.7;
+  controls.maxDistance = 10;
+  controls.maxPolarAngle = 1.53;
+  controls.update();
+
+  /* 灯光 */
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a93a5, 0.85));
+  var key = new THREE.DirectionalLight(0xffffff, 1.0);
+  key.position.set(4, 6.5, 3.5);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.camera.left = -3.5; key.shadow.camera.right = 3.5;
+  key.shadow.camera.top = 4.5; key.shadow.camera.bottom = -1.5;
+  key.shadow.camera.far = 20;
+  key.shadow.bias = -0.0004;
+  scene.add(key);
+  var rim = new THREE.DirectionalLight(0x9fc4ff, 0.5);
+  rim.position.set(-4, 3.5, -4);
+  scene.add(rim);
+  var innerLight = new THREE.PointLight(0xffd9a3, 0, 3.4, 1.6);
+  innerLight.position.set(0, 1.45, 0.1);
+  scene.add(innerLight);
+
+  /* 展台圆盘 */
+  var discMat = new THREE.MeshStandardMaterial({
+    color: isDark() ? 0x1b2029 : 0xe9edf4, roughness: 0.9, metalness: 0.05
+  });
+  var disc = new THREE.Mesh(new THREE.CylinderGeometry(1.65, 1.75, 0.09, 56), discMat);
+  disc.position.y = -0.045;
+  disc.receiveShadow = true;
+  scene.add(disc);
+  var ring = new THREE.Mesh(
+    new THREE.RingGeometry(1.5, 1.57, 64),
+    new THREE.MeshBasicMaterial({ color: 0x0a84ff, transparent: true, opacity: 0.5, side: THREE.DoubleSide })
+  );
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = 0.003;
+  scene.add(ring);
+
+  /* ===== 柜体搭建（GCS：宽 1.0 × 深 0.8 × 高 2.2） ===== */
+  var cab = new THREE.Group();
+  scene.add(cab);
+  var M = {
+    steel:   new THREE.MeshStandardMaterial({ color: 0x49515c, metalness: 0.55, roughness: 0.42 }),
+    steelIn: new THREE.MeshStandardMaterial({ color: 0x2c323b, metalness: 0.35, roughness: 0.62 }),
+    door:    new THREE.MeshStandardMaterial({ color: 0x515963, metalness: 0.55, roughness: 0.36 }),
+    dark:    new THREE.MeshStandardMaterial({ color: 0x22262d, metalness: 0.3,  roughness: 0.55 }),
+    copper:  new THREE.MeshStandardMaterial({ color: 0xc47f3d, metalness: 0.95, roughness: 0.32 }),
+    red:     new THREE.MeshStandardMaterial({ color: 0xd94045, metalness: 0.2,  roughness: 0.5 }),
+    orange:  new THREE.MeshStandardMaterial({ color: 0xff9f0a, metalness: 0.3,  roughness: 0.45 }),
+    cable:   new THREE.MeshStandardMaterial({ color: 0x39404b, metalness: 0.1,  roughness: 0.7 }),
+    plate:   new THREE.MeshStandardMaterial({ color: 0xd7dce4, metalness: 0.6,  roughness: 0.35 })
+  };
+  function box(w, h, d, mat, x, y, z, parent) {
+    var m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+    m.position.set(x, y, z);
+    m.castShadow = true; m.receiveShadow = true;
+    (parent || cab).add(m);
+    return m;
+  }
+  var T = 0.025, Wd = 1.0, Dp = 0.8, Ht = 2.2, base = 0.1;
+  box(1.06, base, 0.86, M.dark, 0, base / 2, 0);                                  // 底座
+  box(T, Ht, Dp, M.steel, -Wd / 2 + T / 2, base + Ht / 2, 0);                     // 左侧板
+  box(T, Ht, Dp, M.steel,  Wd / 2 - T / 2, base + Ht / 2, 0);                     // 右侧板
+  box(Wd, Ht, T, M.steel, 0, base + Ht / 2, -Dp / 2 + T / 2);                    // 背板
+  box(Wd + 0.04, 0.045, Dp + 0.04, M.steel, 0, base + Ht + 0.022, 0);             // 顶盖
+  box(Wd - 0.06, Ht - 0.06, 0.012, M.steelIn, 0, base + Ht / 2, -Dp / 2 + 0.045); // 内衬背板
+  box(Wd - 0.05, 0.02, Dp - 0.06, M.steelIn, 0, base + 1.68, 0);                  // 母线室隔板
+  box(Wd - 0.05, 0.02, Dp - 0.06, M.steelIn, 0, base + 0.68, 0);                  // 电缆室隔板
+  // 母线室：三根铜排 + 绝缘子
+  [-0.2, 0, 0.2].forEach(function (z) {
+    box(0.88, 0.035, 0.07, M.copper, 0, base + 1.95, z);
+    box(0.05, 0.1, 0.05, M.dark, -0.3, base + 1.86, z);
+    box(0.05, 0.1, 0.05, M.dark,  0.3, base + 1.86, z);
+  });
+  // 断路器模块 ×3（深色盒体 + 红色拨杆 + 绿色指示灯）
+  [-0.31, 0, 0.31].forEach(function (x) {
+    box(0.27, 0.52, 0.56, M.dark, x, base + 1.18, -0.06);
+    box(0.27, 0.04, 0.56, M.steelIn, x, base + 1.46, -0.06);
+    box(0.05, 0.13, 0.035, M.red, x, base + 1.18, 0.235);
+    var led = box(0.025, 0.025, 0.012,
+      new THREE.MeshStandardMaterial({ color: 0x30d158, emissive: 0x30d158, emissiveIntensity: 0.9 }),
+      x + 0.08, base + 1.36, 0.228);
+    led.castShadow = false;
+  });
+  // 电缆室：5 根垂直电缆
+  [-0.32, -0.16, 0, 0.16, 0.32].forEach(function (x, i) {
+    var cb = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.52, 14),
+      i % 2 ? M.cable : M.dark);
+    cb.position.set(x, base + 0.4, 0.12);
+    cb.castShadow = true;
+    cab.add(cb);
+  });
+  /* 双开门（铰链组，旋转开合） */
+  var doorH = 2.12, doorW = 0.478, doorT = 0.032;
+  var front = Dp / 2 + doorT / 2 + 0.004;
+  function makeDoor(side) { // side: -1 左门 / +1 右门
+    var hinge = new THREE.Group();
+    hinge.position.set(side * Wd / 2, base + 0.04 + doorH / 2, front - doorT / 2);
+    var panel = new THREE.Mesh(new THREE.BoxGeometry(doorW, doorH, doorT), M.door);
+    panel.position.set(-side * doorW / 2, 0, 0);
+    panel.castShadow = true; panel.receiveShadow = true;
+    hinge.add(panel);
+    var stripe = new THREE.Mesh(new THREE.BoxGeometry(0.022, 1.5, 0.006), M.orange);
+    stripe.position.set(-side * (doorW - 0.09), 0.1, doorT / 2 + 0.004);
+    hinge.add(stripe);
+    var handle = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.52, 12), M.dark);
+    handle.position.set(-side * 0.09, 0, doorT / 2 + 0.035);
+    handle.castShadow = true;
+    hinge.add(handle);
+    var plate = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.07, 0.008), M.plate);
+    plate.position.set(-side * doorW / 2, 0.72, doorT / 2 + 0.004);
+    hinge.add(plate);
+    cab.add(hinge);
+    return hinge;
+  }
+  var doorL = makeDoor(-1), doorR = makeDoor(1);
+  var OPEN_ANGLE = 1.92; // 约 110°
+
+  showroom = {
+    open: true, paused: false, hidden: false, raf: 0,
+    renderer: renderer, scene: scene, camera: camera, controls: controls,
+    stage: stage, discMat: discMat,
+    doorL: doorL, doorR: doorR, doorOpen: false, doorCur: 0,
+    innerLight: innerLight, camAnim: null, CAM_HOME: CAM_HOME
+  };
+
+  var clock = new THREE.Clock();
+  function easeIO(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  (function loop() {
+    if (!showroom) return;
+    showroom.raf = requestAnimationFrame(loop);
+    if (showroom.paused || showroom.hidden || document.hidden) return;
+    var dt = Math.min(clock.getDelta(), 0.05);
+    // 开门动画（插值）
+    var target = showroom.doorOpen ? 1 : 0;
+    showroom.doorCur += (target - showroom.doorCur) * Math.min(1, dt * 5.5);
+    if (Math.abs(target - showroom.doorCur) < 0.002) showroom.doorCur = target;
+    var a = showroom.doorCur * OPEN_ANGLE;
+    showroom.doorL.rotation.y = -a;
+    showroom.doorR.rotation.y = a;
+    // 开门时内部照明灯渐亮
+    var lt = showroom.doorOpen ? 1.35 : 0;
+    showroom.innerLight.intensity += (lt - showroom.innerLight.intensity) * Math.min(1, dt * 5);
+    // 视角飞行动画
+    var ca = showroom.camAnim;
+    if (ca) {
+      ca.t += dt / 0.75;
+      var k = easeIO(Math.min(1, ca.t));
+      camera.position.lerpVectors(ca.fromP, ca.toP, k);
+      controls.target.lerpVectors(ca.fromT, ca.toT, k);
+      if (ca.t >= 1) { showroom.camAnim = null; controls.enabled = true; }
+    }
+    controls.update();
+    renderer.render(scene, camera);
+  })();
+}
+
+function flyToView(name) {
+  if (!showroom || !showroom.open) return;
+  var presets = {
+    front: { p: [0, 1.3, 4.8],      t: [0, 1.05, 0] },
+    side:  { p: [4.8, 1.3, 0],      t: [0, 1.05, 0] },
+    top:   { p: [0.001, 5.6, 0.001], t: [0, 0.8, 0] }
+  };
+  var s = showroom;
+  var pr = presets[name];
+  var toP = pr ? new THREE.Vector3(pr.p[0], pr.p[1], pr.p[2]) : s.CAM_HOME.pos.clone();
+  var toT = pr ? new THREE.Vector3(pr.t[0], pr.t[1], pr.t[2]) : s.CAM_HOME.tgt.clone();
+  s.controls.enabled = false;
+  s.camAnim = {
+    t: 0,
+    fromP: s.camera.position.clone(), toP: toP,
+    fromT: s.controls.target.clone(), toT: toT
+  };
+  $$("#showroom .sr-btn[data-view]").forEach(function (b) {
+    b.classList.toggle("active", b.dataset.view === name);
+  });
+}
+
+function toggleShowroomDoor() {
+  if (!showroom || !showroom.open) return;
+  showroom.doorOpen = !showroom.doorOpen;
+  $("#srDoor").innerHTML = showroom.doorOpen ? "🚪 关门" : "🚪 开门";
+}
+
+function sizeShowroom() {
+  if (!showroom || !showroom.open) return;
+  var w = showroom.stage.clientWidth || 900, h = showroom.stage.clientHeight || 520;
+  showroom.camera.aspect = w / h;
+  showroom.camera.updateProjectionMatrix();
+  showroom.renderer.setSize(w, h);
+}
+
+function applyShowroomTheme() {
+  if (!showroom || !showroom.open) return;
+  var pal = theme3D();
+  showroom.scene.background.setHex(pal.bg);
+  showroom.scene.fog.color.setHex(pal.bg);
+  showroom.discMat.color.setHex(isDark() ? 0x1b2029 : 0xe9edf4);
+}
+
+function closeShowroom() {
+  if (!showroom || !showroom.open) return;
+  try {
+    cancelAnimationFrame(showroom.raf);
+    showroom.controls.dispose();
+    showroom.scene.traverse(function (o) {
+      if (o.geometry) o.geometry.dispose();
+      if (o.material) {
+        var ms = Array.isArray(o.material) ? o.material : [o.material];
+        ms.forEach(function (m) { if (m.map) m.map.dispose(); m.dispose(); });
+      }
+    });
+    showroom.renderer.dispose();
+    var ov = document.getElementById("showroom");
+    if (ov && ov.parentNode) ov.parentNode.removeChild(ov);
+  } catch (e) {}
+  showroom = null;
+  if (trend3d) trend3d.paused = false; // 恢复工作台 3D
+}
+
+/* ---------- 3D 全局：尺寸自适应 / 切页与 tab 隐藏时暂停 / 主题跟随 ---------- */
+window.addEventListener("resize", function () {
+  sizeTrend3D();
+  sizeShowroom();
+});
+document.addEventListener("visibilitychange", function () {
+  var h = document.hidden;
+  if (trend3d) trend3d.hidden = h;
+  if (showroom && showroom.open) showroom.hidden = h;
+});
+function refresh3DTheme() {
+  applyTrend3DTheme();
+  applyShowroomTheme();
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
