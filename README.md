@@ -6,14 +6,14 @@
 
 ## 快速预览
 
-直接用浏览器打开 `index.html` 即可（单文件原型，3D 库已本地化到 `vendor/`，无需联网）。
+直接用浏览器打开 `index.html` 即可（three.js r128 已内联进单文件，零外部依赖，无需联网）。
 
 ## 目录结构
 
 ```
 jingneng10-14/
 ├── index.html          # 可交互 UI 原型（单文件，持续迭代）
-├── vendor/             # 本地化第三方库（three.js r128 + OrbitControls）
+├── （3D 库已内联进 index.html，单文件零依赖）
 ├── db/                 # 数据库设计包（Codex 建表用）
 │   ├── schema.sql          # MySQL 8 完整 DDL，可直接执行
 │   ├── 数据字典.md         # 表/字段/枚举/状态机说明
