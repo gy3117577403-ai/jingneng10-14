@@ -1,0 +1,70 @@
+/**
+ * 京能协同 · 设计语言 Design Tokens
+ * Apple 设计感：浅色留白、毛玻璃、细腻缓动、8px 间距体系
+ */
+
+:root {
+  /* —— 字体 —— */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  /* —— 色彩（浅色主题） —— */
+  --color-bg: #f5f5f7;
+  --color-bg-elevated: rgba(255, 255, 255, 0.72);
+  --color-card: #ffffff;
+  --color-text: #1d1d1f;
+  --color-text-2: #515154;
+  --color-text-3: #86868b;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.14);
+  --color-accent: #0071e3;
+  --color-accent-hover: #0077ed;
+  --color-accent-soft: rgba(0, 113, 227, 0.1);
+  --color-success: #34c759;
+  --color-success-soft: rgba(52, 199, 89, 0.12);
+  --color-warning: #ff9f0a;
+  --color-warning-soft: rgba(255, 159, 10, 0.14);
+  --color-danger: #ff3b30;
+  --color-danger-soft: rgba(255, 59, 48, 0.1);
+  --color-purple: #a259ff;
+  --color-purple-soft: rgba(162, 89, 255, 0.12);
+
+  /* —— 圆角 —— */
+  --radius-xs: 6px;
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 16px;
+  --radius-xl: 20px;
+  --radius-full: 999px;
+
+  /* —— 间距（8px 体系） —— */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+
+  /* —— 阴影 —— */
+  --shadow-s: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-m: 0 2px 6px rgba(0, 0, 0, 0.05), 0 12px 32px rgba(0, 0, 0, 0.08);
+  --shadow-l: 0 8px 24px rgba(0, 0, 0, 0.08), 0 24px 64px rgba(0, 0, 0, 0.12);
+
+  /* —— 毛玻璃 —— */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-blur: saturate(180%) blur(20px);
+  --glass-border: rgba(255, 255, 255, 0.6);
+
+  /* —— 动效 —— */
+  --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --duration-fast: 0.15s;
+  --duration-base: 0.25s;
+  --duration-slow: 0.4s;
+
+  /* —— 布局 —— */
+  --sidebar-width: 232px;
+  --header-height: 64px;
+  --content-max: 1280px;
+}
