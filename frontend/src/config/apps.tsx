@@ -37,7 +37,7 @@ export const APPS: AppDefinition[] = [
     name: "报价管理",
     icon: icon("📝", "linear-gradient(135deg,#ffd60a,#ff9f0a)"),
     route: "/quotes",
-    desc: "报价单 · 审批 · 转订单",
+    desc: "Excel 导入 · 工时费用 · 保存与导出",
     sort: 2,
   },
   {

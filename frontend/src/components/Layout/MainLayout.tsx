@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { APPS, SIDEBAR_APPS } from "../../config/apps";
 import { Avatar } from "../ui/basic";
 import { orgApi } from "../../api/endpoints";
@@ -27,6 +27,7 @@ function Sidebar({ user }: { user: SessionUser | null }) {
   const { width, setWidth, collapsed, setCollapsed } = useSidebarWidth();
   const dragging = useRef(false);
   const location = useLocation();
+  const isWorkbench = location.pathname.startsWith('/quotes');
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -95,10 +96,10 @@ function Sidebar({ user }: { user: SessionUser | null }) {
       </nav>
 
       <div className="sidebar-footer">
-        <Avatar name={user?.realName ?? "管"} size={30} />
+        <Avatar name={isWorkbench ? "本" : user?.realName ?? "管"} size={30} />
         <div className="user-meta">
-          <div style={{ fontSize: 13, fontWeight: 600 }}>{user?.realName ?? "—"}</div>
-          <div style={{ fontSize: 11, color: "var(--color-text-3)" }}>{user?.deptName ?? ""}</div>
+          <div style={{ fontSize: 13, fontWeight: 600 }}>{isWorkbench ? "本机工作台" : user?.realName ?? "—"}</div>
+          <div style={{ fontSize: 11, color: "var(--color-text-3)" }}>{isWorkbench ? "独立报价数据" : user?.deptName ?? ""}</div>
         </div>
         <button className="collapse-btn" onClick={() => setCollapsed(!collapsed)} title={collapsed ? "展开" : "折叠"}>
           {collapsed ? "›" : "‹"}
@@ -111,6 +112,7 @@ function Sidebar({ user }: { user: SessionUser | null }) {
 }
 
 function Header({ title }: { title: string }) {
+  const isWorkbench = useLocation().pathname.startsWith('/quotes');
   const [user, setUser] = useState<SessionUser | null>(null);
   useEffect(() => { orgApi.me().then(setUser).catch(() => {}); }, []);
   return (
@@ -121,8 +123,8 @@ function Header({ title }: { title: string }) {
           {new Date().toLocaleDateString("zh-CN", { month: "long", day: "numeric", weekday: "long" })}
         </span>
         <div className="header-user">
-          <Avatar name={user?.realName ?? "管"} size={30} />
-          <span>{user?.realName ?? ""}</span>
+          <Avatar name={isWorkbench ? "本" : user?.realName ?? "管"} size={30} />
+          <span>{isWorkbench ? "本机模式" : user?.realName ?? ""}</span>
         </div>
       </div>
     </header>
@@ -151,6 +153,7 @@ export function MainLayout() {
       <div className="main">
         <Header title={title} />
         <div className="content">
+          {!location.pathname.startsWith('/quotes') && <div className="prototype-notice">此页面保留原项目的演示数据。实际报价请进入 <Link to="/quotes">报价工作台</Link>。</div>}
           <Outlet />
         </div>
       </div>

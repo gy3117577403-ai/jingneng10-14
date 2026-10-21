@@ -172,3 +172,4 @@
 .header-user { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; }
 
 .content { flex: 1; overflow-y: auto; }
+.prototype-notice { margin: 16px 24px 0; padding: 10px 14px; background: #fff5de; color: #8b6c30; border: 1px solid #eddfbd; border-radius: 7px; font-size: 12px; }

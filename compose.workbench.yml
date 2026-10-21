@@ -1,0 +1,22 @@
+name: jingneng-quote-workbench
+services:
+  mysql:
+    image: mariadb:11.8.9
+    restart: unless-stopped
+    env_file: .local/workbench/mysql.env
+    ports:
+      - "127.0.0.1:33371:3306"
+    volumes:
+      - quote-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 4s
+      retries: 30
+volumes:
+  quote-data:
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 10.253.71.0/24

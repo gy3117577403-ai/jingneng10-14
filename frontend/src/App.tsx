@@ -1,9 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { MainLayout } from "./components/Layout/MainLayout";
 import { Dashboard } from "./pages/Dashboard/Dashboard";
-import { QuoteList } from "./pages/Quotes/QuoteList";
-import { QuoteForm } from "./pages/Quotes/QuoteForm";
-import { QuoteDetail } from "./pages/Quotes/QuoteDetail";
+import { QuoteHome } from "./workbench/QuoteHome";
+import { QuoteWorkbench } from "./workbench/QuoteWorkbench";
 import { Approvals } from "./pages/Approvals/Approvals";
 import { Contacts } from "./pages/Contacts/Contacts";
 import { Apps, ComingSoon } from "./pages/Apps/Apps";
@@ -14,11 +13,11 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<MainLayout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route index element={<Navigate to="/quotes" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/quotes" element={<QuoteList />} />
-          <Route path="/quotes/new" element={<QuoteForm />} />
-          <Route path="/quotes/:id" element={<QuoteDetail />} />
+          <Route path="/quotes" element={<QuoteHome />} />
+          <Route path="/quotes/new" element={<QuoteWorkbench />} />
+          <Route path="/quotes/:id" element={<QuoteWorkbench />} />
           <Route path="/approvals" element={<Approvals />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/apps" element={<Apps />} />

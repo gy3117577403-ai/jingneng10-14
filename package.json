@@ -1,0 +1,19 @@
+{
+  "name": "jingneng-quote-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": ["frontend", "backend", "packages/quote-core"],
+  "scripts": {
+    "backup": "node --import tsx scripts/backup.ts",
+    "verify:reference": "node --import tsx scripts/verify-reference.ts",
+    "setup": "node scripts/setup.mjs",
+    "db:up": "node scripts/database.mjs",
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run build --workspace frontend && npm run check --workspace backend",
+    "start": "node --import tsx backend/src/server.ts",
+    "test": "node --import tsx --test packages/quote-core/test/*.test.ts backend/test/*.test.ts"
+  },
+  "devDependencies": {"tsx": "^4.21.0", "typescript": "~6.0.3", "@types/node": "^24.19.2"},
+  "engines": {"node": ">=22.12"}
+}
