@@ -516,6 +516,20 @@ body.side-collapsed .nav-item:hover::after {
   position: absolute; right: 10px; bottom: 8px; z-index: 4; pointer-events: none;
   font-size: 11px; color: var(--text-3);
 }
+/* WebGL 不可用时的提示条（降级不再静默） */
+.webgl-note {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 10px; padding: 8px 12px;
+  font-size: 12px; color: var(--text-2);
+  background: var(--accent-soft, rgba(10,132,255,.08));
+  border: 1px solid rgba(10,132,255,.18); border-radius: 10px;
+}
+.webgl-note span { color: var(--text-3); }
+.webgl-note button {
+  margin-left: auto; border: 0; background: transparent; cursor: pointer;
+  color: var(--text-3); font-size: 12px; padding: 2px 6px; border-radius: 6px;
+}
+.webgl-note button:hover { background: rgba(127,127,127,.15); color: var(--text-1); }
 
 /* ============ 应用卡片 3D 倾斜 ============ */
 .app-card.tilt3d {
@@ -2090,7 +2104,7 @@ function renderDashboard() {
         '<div class="card pad"><div class="panel-head"><h3>📈 近7天报价金额趋势（万元）</h3><span class="more">查看报表 →</span></div>' +
           (webglOK()
             ? '<div id="trend3d"><div class="trend-tip" id="trendTip"></div><div class="trend-hint">拖拽旋转 · 悬停查看数值</div></div>'
-            : weeklyChartSVG()) + "</div>" +
+            : '<div class="webgl-note">当前环境不支持 3D 渲染，已切换为 2D 显示<span>下载文件后用 Chrome / Edge 打开可查看 3D 效果</span><button onclick="this.parentElement.remove()" aria-label="关闭">✕</button></div>' + weeklyChartSVG()) + "</div>" +
         '<div class="card pad"><div class="panel-head"><h3>🕒 最新动态</h3><span class="more">全部动态 →</span></div>' +
           '<div class="timeline">' + DB.feed.map(f =>
             '<div class="tl-item"><span class="tl-dot" style="background:' + f.color + '"></span>' +
